@@ -91,7 +91,7 @@ final class Versions
   'webmozart/assert' => '1.9.1@bafc69caeb4d49c39fd0779086c03a3738cbb389',
   'webmozart/glob' => '4.3.0@06358fafde0f32edb4513f4fd88fe113a40c90ee',
   'webmozart/path-util' => '2.3.0@d939f7edc24c9a1bb9c0dee5cb05d8e859490725',
-  'gornung/webentwicklung' => 'No version set (parsed as 1.0.0)@',
+  'gornung/webentwicklung' => 'dev-master@26c32cdb1820aaa9144e2cf8f9d221d98f88cbd4',
 );
 
     private function __construct()
