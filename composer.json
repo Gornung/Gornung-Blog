@@ -1,7 +1,7 @@
 {
   "name": "gornung/webentwicklung",
   "type": "project",
-  "description": "Project stub für das FWPM 'Webentwicklung'",
+  "description": "Projekt für das FWPM 'Webentwicklung' - Blog",
   "authors": [
     {
       "name": "Alexander Gornung",
