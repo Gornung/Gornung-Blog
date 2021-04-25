@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Gornung\Webentwicklung\Http\Request;
-use Gornung\Webentwicklung\Http\RequestInterface;
 use Gornung\Webentwicklung\Http\Response;
 use Gornung\Webentwicklung\Http\ResponseInterface;
 use Gornung\Webentwicklung\Router;
+use Gornung\Webentwicklung\Controller\Blog as BlogController;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -18,23 +18,8 @@ $response = new Response();
 
 $router = new Router();
 
-$router->addRoute(
-    '/hello',
-    function (RequestInterface $request, ResponseInterface $response) {
-        $personToGreet = 'stranger';
-        if ($request->hasParameter('name')) {
-            $personToGreet = $request->getParameter('name');
-        }
-        $response->setBody('Hello there ' . $personToGreet);
-    }
-);
+$router->addRoute('/blog/show', [BlogController::class, 'show']);
 
-$router->addRoute(
-  '/info',
-  function (ResponseInterface $request, ResponseInterface $response) {
-      phpinfo();
-  }
-);
 
 $router->route($request, $response);
 
