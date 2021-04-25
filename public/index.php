@@ -2,19 +2,41 @@
 
 declare(strict_types=1);
 
-use Gornung\Webentwicklung\Request;
-use Gornung\Webentwicklung\Response;
+use Gornung\Webentwicklung\Http\Request;
+use Gornung\Webentwicklung\Http\RequestInterface;
+use Gornung\Webentwicklung\Http\Response;
+use Gornung\Webentwicklung\Http\ResponseInterface;
+use Gornung\Webentwicklung\Router;
 
-require __DIR__ . '/../vendor/autoload.php';
+require dirname(__DIR__) . '/vendor/autoload.php';
 
-$urlPath = $_SERVER['REQUEST_URI'];
+$request = new Request();
+$request->setUrl($_SERVER['REQUEST_URI']);
+$request->setParameters($_REQUEST);
 
-if (strpos(strtolower($urlPath), 'hello')) {
-    $personToGreet = 'Stranger';
-    if (isset($_REQUEST['name'])) {
-        $personToGreet = $_REQUEST['name'];
+$response = new Response();
+
+$router = new Router();
+
+$router->addRoute(
+    '/hello',
+    function (RequestInterface $request, ResponseInterface $response) {
+        $personToGreet = 'stranger';
+        if ($request->hasParameter('name')) {
+            $personToGreet = $request->getParameter('name');
+        }
+        $response->setBody('Hello there ' . $personToGreet);
     }
-    echo 'Hello ' . $personToGreet;
-} else {
-    echo 'Hello there!';
-}
+);
+
+$router->addRoute(
+  '/info',
+  function (ResponseInterface $request, ResponseInterface $response) {
+      phpinfo();
+  }
+);
+
+$router->route($request, $response);
+
+http_response_code($response->getStatusCode());
+echo $response->getBody();
