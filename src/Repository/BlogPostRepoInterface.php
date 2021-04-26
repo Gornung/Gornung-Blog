@@ -19,17 +19,19 @@ interface BlogPostRepoInterface
      *
      * @return \Gornung\Webentwicklung\Model\BlogPost
      */
-    public function get($id): BlogPost;
+    public function getById($id): BlogPost;
 
     /**
-     * @param   \Gornung\Webentwicklung\  $collectionBuilder
-     *
      * @return array
-     */
-    //    public function getList(BuilderInterface $collectionBuilder): array;
+    public function get(): array;
 
     /**
      * @param   \Gornung\Webentwicklung\Model\BlogPost  $post
      */
     public function delete(BlogPost $post): void;
+
+    /**
+     * @param $id
+     */
+    public function deleteById($id): void;
 }

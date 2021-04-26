@@ -15,8 +15,9 @@ $request->setUrl($_SERVER['REQUEST_URI']);
 $request->setParameters($_REQUEST);
 
 $response = new Response();
-
 $router = new Router();
+$blogController = new BlogController();
+
 
 $router->addRoute('/blog/show', [BlogController::class, 'show']);
 

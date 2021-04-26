@@ -6,8 +6,19 @@ namespace Gornung\Webentwicklung\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * Class BlogPost
+ *
+ * @package Gornung\Webentwicklung\Model
+ *
+ * @author  gornung
+ * @ORM\Entity
+ * @ORM\Table(name="blog_post)
+ *
+ */
 class BlogPost
 {
+
     /**
      * @var string
      *
@@ -22,21 +33,28 @@ class BlogPost
      *
      * @ORM\Column(type="string", nullable=false)
      */
-    protected $title;
+    protected string $title;
 
     /**
      * @var string
      *
      * @ORM\Column(type="string", nullable=false)
      */
-    protected $text;
+    protected string $text;
 
     /**
      * @var string
      *
      * @ORM\Column(type="string", nullable=false)
      */
-    protected $author;
+    protected string $author;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="datetime", nullable=false)
+     */
+    protected string $dateTime;
 
     /**
      * @return string
@@ -47,7 +65,7 @@ class BlogPost
     }
 
     /**
-     * @param string $id
+     * @param   string  $id
      */
     public function setId(string $id): void
     {
@@ -63,7 +81,7 @@ class BlogPost
     }
 
     /**
-     * @param string $title
+     * @param   string  $title
      */
     public function setTitle(string $title): void
     {
@@ -79,7 +97,7 @@ class BlogPost
     }
 
     /**
-     * @param string $text
+     * @param   string  $text
      */
     public function setText(string $text): void
     {
@@ -95,7 +113,7 @@ class BlogPost
     }
 
     /**
-     * @param string $author
+     * @param   string  $author
      */
     public function setAuthor(string $author): void
     {

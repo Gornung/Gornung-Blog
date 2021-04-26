@@ -2,9 +2,10 @@
 
 namespace Gornung\Webentwicklung\Repository;
 
+use Gornung\Webentwicklung\Controller\Blog;
 use Gornung\Webentwicklung\Model\BlogPost;
 
-class BlogPostRepository implements BlogPostRepoInterface
+class BlogPostRepository extends AbstractRepository implements BlogPostRepoInterface
 {
 
     public function save(BlogPost $post): void
@@ -12,7 +13,7 @@ class BlogPostRepository implements BlogPostRepoInterface
         // TODO: Implement save() method.
     }
 
-    public function get($id): BlogPost
+    public function get(): array
     {
         // TODO: Implement get() method.
     }
@@ -21,4 +22,31 @@ class BlogPostRepository implements BlogPostRepoInterface
     {
         // TODO: Implement delete() method.
     }
+
+    /**
+     * @param $id
+     *
+     * @return object[]
+     */
+    public function getById($id): array
+    {
+        return $this->getRepository()->findAll($id);
+    }
+
+    /**
+     * @param $id
+     */
+    public function deleteById($id): void
+    {
+        return $this->getRepository()->findAll();
+    }
+
+    /**
+     * @return string
+     */
+    protected function getEntityClassName()
+    {
+        return BlogPost::class;
+    }
+
 }
