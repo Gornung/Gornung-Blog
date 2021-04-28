@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Gornung\Webentwicklung\Http;
 
-class Response implements ResponseInterface
+class Response implements IResponse
 {
 
     protected string $body;

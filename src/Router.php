@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Gornung\Webentwicklung;
 
-use Gornung\Webentwicklung\Http\RequestInterface;
-use Gornung\Webentwicklung\Http\ResponseInterface;
+use Gornung\Webentwicklung\Http\IRequest;
+use Gornung\Webentwicklung\Http\IResponse;
 
 use function call_user_func;
 
@@ -24,12 +24,12 @@ class Router
     }
 
     /**
-     * @param   \Gornung\Webentwicklung\Http\RequestInterface   $request
-     * @param   \Gornung\Webentwicklung\Http\ResponseInterface  $response
+     * @param   \Gornung\Webentwicklung\Http\IRequest   $request
+     * @param   \Gornung\Webentwicklung\Http\IResponse  $response
      */
     public function route(
-      RequestInterface $request,
-      ResponseInterface $response
+      IRequest $request,
+      IResponse $response
     ) {
         $url = strtolower($request->getUrl());
         foreach ($this->routes as $route => $controller) {

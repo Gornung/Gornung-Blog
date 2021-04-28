@@ -32,7 +32,7 @@ abstract class AbstractRepository
      *
      * @throws ORMException
      */
-    protected function initEntityManager()
+    protected function initEntityManager(): void
     {
         // Create a simple "default" Doctrine ORM configuration for Annotations
         $config = Setup::createAnnotationMetadataConfiguration(
@@ -45,10 +45,10 @@ abstract class AbstractRepository
 
         // database configuration parameters
         $connectionDetails = [
-          'driver' => 'pdo_mysql',
-          'user' => getenv('DB_USER'),
+          'driver'   => 'pdo_mysql',
+          'user'     => getenv('DB_USER'),
           'password' => getenv('DB_PASSWORD'),
-          'dbname' => getenv('DB_NAME'),
+          'dbname'   => getenv('DB_NAME'),
         ];
 
         // obtaining the entity manager
@@ -61,7 +61,7 @@ abstract class AbstractRepository
     /**
      * @return ObjectRepository
      */
-    protected function getRepository()
+    protected function getRepository(): ObjectRepository
     {
         return $this->getEntityManager()->getRepository(
             $this->getEntityClassName()
@@ -71,7 +71,7 @@ abstract class AbstractRepository
     /**
      * @return EntityManager
      */
-    protected function getEntityManager()
+    protected function getEntityManager(): EntityManager
     {
         return $this->entityManager;
     }
@@ -79,5 +79,5 @@ abstract class AbstractRepository
     /**
      * @return string
      */
-    abstract protected function getEntityClassName();
+    abstract protected function getEntityClassName(): string;
 }

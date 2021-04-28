@@ -6,23 +6,31 @@ namespace Gornung\Webentwicklung\Repository;
 
 use Gornung\Webentwicklung\Model\BlogPost;
 
-interface BlogPostRepoInterface
+interface IBlogPostRepository
 {
 
     /**
      * @param   \Gornung\Webentwicklung\Model\BlogPost  $post
      */
-    public function save(BlogPost $post): void;
+    public function add(BlogPost $post): void;
 
     /**
      * @param $id
      *
-     * @return \Gornung\Webentwicklung\Model\BlogPost
+     * @return object
      */
-    public function getById($id): BlogPost;
+    public function getById($id): object;
+
+    /**
+     * @param $keyword
+     *
+     * @return array
+     */
+    public function getByKeyword($keyword): array;
 
     /**
      * @return array
+     */
     public function get(): array;
 
     /**

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Gornung\Webentwicklung\Http;
 
-interface ResponseInterface
+interface IResponse
 {
 
     /**

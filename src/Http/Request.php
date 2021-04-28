@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Gornung\Webentwicklung\Http;
 
-class Request implements RequestInterface
+class Request implements IRequest
 {
 
     protected string $url = '';
