@@ -6,7 +6,7 @@ namespace Gornung\Webentwicklung\View\BlogPost;
 
 use Gornung\Webentwicklung\View\AbstractView;
 
-class Show extends AbstractView
+class Add extends AbstractView
 {
 
     /**
@@ -14,6 +14,6 @@ class Show extends AbstractView
      */
     protected function getTemplatePath(): string
     {
-        return '/view/templates/blog/show.html';
+        return '/view/templates/blog/add.html';
     }
 }

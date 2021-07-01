@@ -1,121 +1,64 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Gornung\Webentwicklung\Repository;
 
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
-use Exception;
 use Gornung\Webentwicklung\Model\BlogPost;
+use PDO;
 
 class BlogPostRepository extends AbstractRepository
 {
 
     /**
-     * @return BlogPost[]
+     * BlogPostRepository constructor.
      */
-    public function get(): array
+    public function __construct()
     {
-        return $this->getRepository()->findAll();
+        $this->connectToDb();
     }
 
 
     /**
-     * @param  string  $urlKey
-     *
-     * @return \Gornung\Webentwicklung\Model\BlogPost
-     */
-    public function getByUrlKey(string $urlKey): BlogPost
-    {
-        $entityManager = $this->entityManager;
-        $queryBuilder  = $entityManager->getQueryBuilder();
-
-        $query = $queryBuilder->select('post', 'user')
-                              ->from(
-                                  'Gornung\Webentwicklung\Model',
-                                  'post'
-                              )
-                              ->leftJoin('p.urlKey = :urlKey')
-                              ->setParameter('urlKey', $urlKey)
-                              ->getQuery();
-        try {
-            $blogPost = $query->getSingleResult();
-            return $blogPost;
-        } catch (Exception $e) {
-            throw new DatabaseException();
-        }
-    }
-
-    /**
-     * @param  string  $keyword
-     *
-     * @return BlogPost[]
-     */
-    public function getByKeyword(string $keyword)
-    {
-        $dql   = " 
-        SELECT b.title, b.text, b.author
-          FROM Gornung\Webentwicklung\Model\BlogPost b
-          WHERE b.author like '%$keyword%' or b.title like '%$keyword%' or b.text like '%$keyword%' 
-    ";
-        $query = $this->entityManager->createQuery($dql);
-
-        return $query->getResult();
-    }
-
-    /**
-     * @param  BlogPost  $blogPost
-     *
-     * @return void
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @param BlogPost $blogPost
      */
     public function add(BlogPost $blogPost): void
     {
-        $this->getEntityManager()->persist($blogPost);
-        $this->getEntityManager()->flush();
+        $query = $this->connection->prepare(
+            'insert into blog_posts (title, url_key, author, text) values (:title, :urlKey, :author, :text); '
+        );
+        $query->bindParam(':title', $blogPost->title);
+        $query->bindParam(':urlKey', $blogPost->urlKey);
+        $query->bindParam(':author', $blogPost->author);
+        $query->bindParam(':text', $blogPost->text);
+        $query->execute();
     }
 
-    /**
-     * @param  string  $id
-     */
-    public function removeById(string $id): void
-    {
-        $blogpost = $this->getById($id);
 
-        try {
-            $this->remove($blogpost);
-        } catch (ORMException $e) {
-            echo 'ORMException';
+    /**
+     * @param string $urlKey
+     * @return BlogPost|null
+     */
+    public function getByUrlKey(string $urlKey): ?BlogPost
+    {
+        $query = $this->connection->prepare(
+            'select * from blog_posts where url_key = :urlKey'
+        );
+        $query->bindParam(':urlKey', $urlKey);
+        $query->execute();
+        $query->setFetchMode(PDO::FETCH_ASSOC);
+        $resultData = $query->fetch();
+
+        if (!$resultData) {
+            return null;
         }
-    }
 
-    /**
-     * @param  string  $id
-     *
-     * @return BlogPost
-     */
-    public function getById(string $id): BlogPost
-    {
-        return $this->getRepository()->find($id);
-    }
-
-    /**
-     * @param  BlogPost  $blogPost
-     *
-     * @return void
-     * @throws ORMException
-     */
-    public function remove(BlogPost $blogPost): void
-    {
-        $this->getEntityManager()->remove($blogPost);
-        $this->getEntityManager()->flush();
-    }
-
-    /**
-     * @return string
-     */
-    protected function getEntityClassName(): string
-    {
-        return BlogPost::class;
+        $result         = new BlogPost();
+        $result->id     = $resultData['id'];
+        $result->title  = $resultData['title'];
+        $result->urlKey = $resultData['url_key'];
+        $result->author = $resultData['author'];
+        $result->text   = $resultData['text'];
+        return $result;
     }
 }

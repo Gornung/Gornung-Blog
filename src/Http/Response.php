@@ -10,7 +10,7 @@ class Response implements IResponse
     /**
      * @var string
      */
-    protected string $body;
+    protected string $body = '';
 
     /**
      * @var int
@@ -73,20 +73,20 @@ class Response implements IResponse
     }
 
     /**
-     * @param  array  $headers
-     */
-    public function setHeaders(array $headers): void
-    {
-        $this->headers = $headers;
-    }
-
-    /**
      * @param  string  $name
      * @param  string  $header
      */
     public function setHeader(string $name, string $header): void
     {
         $this->headers[$name] = $header;
+    }
+
+    /**
+     * @param array $headers
+     */
+    public function setHeaders(array $headers): void
+    {
+        $this->headers = $headers;
     }
 
     /**

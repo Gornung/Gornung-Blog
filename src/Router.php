@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Gornung\Webentwicklung;
 
+use Gornung\Webentwicklung\Exceptions\NotFoundException;
 use Gornung\Webentwicklung\Http\IRequest;
 use Gornung\Webentwicklung\Http\IResponse;
 
@@ -47,6 +48,6 @@ class Router implements RouterInterface
             }
         }
 
-        $response->setBody('Hello there!');
+        throw new NotFoundException();
     }
 }

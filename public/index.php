@@ -5,23 +5,31 @@ declare(strict_types=1);
 use Gornung\Webentwicklung\Http\Request;
 use Gornung\Webentwicklung\Http\Response;
 use Gornung\Webentwicklung\Router;
-use Gornung\Webentwicklung\Controller\BlogPost\Index as BlogPostController;
+use Gornung\Webentwicklung\Controller\Blog as BlogController;
+use Gornung\Webentwicklung\Exceptions\NotFoundException;
 
-require dirname(__DIR__) . '/vendor/autoload.php';
-
-$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
-$dotenv->load();
+require __DIR__ . '/../vendor/autoload.php';
 
 $request = new Request();
 $request->setUrl($_SERVER['REQUEST_URI']);
 $request->setParameters($_REQUEST);
+
 $response = new Response();
 
 $router = new Router();
 
-$router->addRoute('/blog/show', BlogPostController::class, 'execute');
+$router->addRoute('/blog/show', BlogController::class, 'show');
+$router->addRoute('/blog/add', BlogController::class, 'add');
 
-$router->route($request, $response);
+try {
+    $router->route($request, $response);
+} catch (NotFoundException $exception) {
+    $response->setStatusCode($exception->getCode());
+    $response->setBody('Sorry, 404');
+} catch (\Exception $exception) {
+    $response->setStatusCode(500);
+    $response->setBody('Uh Oh ...');
+}
 
 http_response_code($response->getStatusCode());
 echo $response->getBody();
