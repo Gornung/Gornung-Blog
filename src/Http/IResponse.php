@@ -13,7 +13,7 @@ interface IResponse
     public function getBody(): string;
 
     /**
-     * @param   string  $body
+     * @param  string  $body
      */
     public function setBody(string $body): void;
 
@@ -23,12 +23,12 @@ interface IResponse
     public function getStatusCode(): int;
 
     /**
-     * @param   int  $statusCode
+     * @param  int  $statusCode
      */
     public function setStatusCode(int $statusCode): void;
 
     /**
-     * @param   string  $name
+     * @param  string  $name
      *
      * @return string
      */
@@ -40,21 +40,20 @@ interface IResponse
     public function getHeaders(): array;
 
     /**
-     * @param   string  $name
-     * @param   string  $header
+     * @param  string  $name
+     * @param  string  $header
      */
     public function setHeader(string $name, string $header): void;
 
     /**
-     * @param   array  $headers
+     * @param  array  $headers
      */
     public function setHeaders(array $headers): void;
 
     /**
-     * @param   string  $name
+     * @param  string  $name
      *
      * @return bool
      */
     public function hasHeader(string $name): bool;
-
 }

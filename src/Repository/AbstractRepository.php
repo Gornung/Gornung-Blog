@@ -6,65 +6,96 @@ namespace Gornung\Webentwicklung\Repository;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
-use Doctrine\Persistence\ObjectRepository;
+use Dotenv\Dotenv;
+use Gornung\Webentwicklung\Exceptions\DatabaseException;
+use PDOException;
 
 abstract class AbstractRepository
 {
 
-    /**
-     * @var EntityManager
-     */
-    protected $entityManager;
+    protected EntityManager $entityManager;
 
     /**
      * AbstractRepository constructor.
      *
-     * @throws ORMException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Gornung\Webentwicklung\Exceptions\DatabaseException
      */
     public function __construct()
     {
-        $this->initEntityManager();
+        try {
+            $this->createEntityManager();
+        } catch (ORMException $e) {
+            throw new ORMException($e->__toString());
+        } catch (DatabaseException $e) {
+            throw new DatabaseException('could not create an Entity Manager');
+        }
     }
 
     /**
-     * @return void
+     * Create Doctrine's Entity Manager
      *
-     * @throws ORMException
+     * @throws DatabaseException|\Doctrine\ORM\ORMException
      */
-    protected function initEntityManager(): void
+    private function createEntityManager()
     {
-        // Create a simple "default" Doctrine ORM configuration for Annotations
-        $config = Setup::createAnnotationMetadataConfiguration(
-            [dirname(__DIR__) . '/Model'],
-            (bool)getenv('APP_DEV_MODE'),
-            null,
-            null,
-            false
-        );
+        $dotenv = Dotenv::createImmutable(dirname(dirname(__DIR__)));
+        $dotenv->load();
 
-        // database configuration parameters
-        $connectionDetails = [
-          'driver'   => 'pdo_mysql',
-          'user'     => getenv('DB_USER'),
-          'password' => getenv('DB_PASSWORD'),
-          'dbname'   => getenv('DB_NAME'),
-        ];
+        try {
+            $isDevMode                 = true;
+            $proxyDir                  = null;
+            $cache                     = null;
+            $useSimpleAnnotationReader = false;
+            $config                    = Setup::createAnnotationMetadataConfiguration(
+                [__DIR__ . "/../Model"],
+                $isDevMode,
+                $proxyDir,
+                $cache,
+                $useSimpleAnnotationReader
+            );
 
-        // obtaining the entity manager
-        $this->entityManager = EntityManager::create(
-            $connectionDetails,
-            $config
-        );
+
+            $connectionParams = [
+              'dbname'   => $_ENV['DB_NAME'],
+              'user'     => $_ENV['DB_USER'],
+              'password' => $_ENV['DB_PASSWORD'],
+              'host'     => $_ENV['DB_HOST'],
+              'driver'   => $_ENV['DB_DRIVER'],
+            ];
+
+            $this->entityManager = EntityManager::create(
+                $connectionParams,
+                $config
+            );
+
+            // createSchema for first time before there is no db setted up TODO use it conditionaly
+            $this->createSchema();
+        } catch (PDOException $e) {
+            throw new DatabaseException(
+                'Failed to connect to Database with EntityManager',
+                400
+            );
+        }
     }
 
     /**
-     * @return ObjectRepository
+     * @throws \Doctrine\ORM\Tools\ToolsException
      */
-    protected function getRepository(): ObjectRepository
+    private function createSchema()
     {
-        return $this->getEntityManager()->getRepository(
-            $this->getEntityClassName()
+        $schemaTool = new SchemaTool($this->entityManager);
+        $schemaTool->createSchema(
+            [
+            $this->entityManager->getClassMetadata(
+                'Gornung\Webentwicklung\Model\BlogUser'
+            ),
+            $this->entityManager->getClassMetadata(
+                'Gornung\Webentwicklung\Model\BlogPost'
+            ),
+            ]
         );
     }
 
@@ -75,9 +106,4 @@ abstract class AbstractRepository
     {
         return $this->entityManager;
     }
-
-    /**
-     * @return string
-     */
-    abstract protected function getEntityClassName(): string;
 }

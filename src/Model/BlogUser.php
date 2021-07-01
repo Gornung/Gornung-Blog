@@ -5,98 +5,93 @@ declare(strict_types=1);
 namespace Gornung\Webentwicklung\Model;
 
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 
 /**
+ * Class User
+ *
  * @ORM\Entity
- * @ORM\Table(name="blog_users")
+ * @ORM\Table(name="users")
  */
 class BlogUser
 {
 
     /**
      * @var string
-     *
+     * @ORM\Column(type = "string")
      * @ORM\Id
-     * @ORM\Column(type="string")
-     * @ORM\GeneratedValue(strategy="UUID")
      */
-
-    protected $id;
+    private string $userId;
 
     /**
      * @var string
-     *
-     * @ORM\Column(type="string", nullable=false, unique=true)
-     */
-
-    protected $username;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(type="string", nullable=false)
      */
-    protected $password;
+    private string $username;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(type="integer", nullable=false)
+     * @var string
+     * @ORM\Column(type="string", nullable=false)
      */
-    protected $isAdmin;
+    private string $password;
 
-
-    public function __construct()
+    /**
+     * @param $username
+     * @param $password
+     *
+     */
+    public function __construct($username, $password)
     {
-        $this->isAdmin = 0;
+        $this->userId   = Uuid::uuid4()->__toString();
+        $this->username = $username;
+        $this->password = $password;
     }
 
+    /**
+     * @return string
+     */
+    public function getUserId(): string
+    {
+        return $this->userId;
+    }
+
+    /**
+     * @param  string  $userId
+     */
+    public function setUserId(string $userId): void
+    {
+        $this->userId = $userId;
+    }
+
+    /**
+     * @return string
+     */
     public function getUsername(): string
     {
         return $this->username;
     }
 
+    /**
+     * @param  string  $username
+     */
     public function setUsername(string $username): void
     {
         $this->username = $username;
     }
 
+    /**
+     * @return string
+     */
     public function getPassword(): string
     {
         return $this->password;
     }
 
+    /**
+     * @param  string  $password
+     */
     public function setPassword(string $password): void
     {
-        if ($password != null) {
-            $this->password = $password;
-        }
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function isAdmin()
-    {
-        if ($this->isAdmin == 1) {
-            return true;
-        }
-        return false;
-    }
-
-    public function setAdminRole(bool $value)
-    {
-        if ($value) {
-            $this->isAdmin = 1;
-        } else {
-            $this->isAdmin = 0;
-        }
-    }
-
-    public function getAdminRole()
-    {
-        return $this->isAdmin;
+        $this->password = $password;
     }
 }

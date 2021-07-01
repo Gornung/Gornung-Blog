@@ -5,8 +5,7 @@ declare(strict_types=1);
 use Gornung\Webentwicklung\Http\Request;
 use Gornung\Webentwicklung\Http\Response;
 use Gornung\Webentwicklung\Router;
-use Gornung\Webentwicklung\Controller\IController;
-use Gornung\Webentwicklung\
+use Gornung\Webentwicklung\Controller\BlogPost\Index as BlogPostController;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -16,14 +15,11 @@ $dotenv->load();
 $request = new Request();
 $request->setUrl($_SERVER['REQUEST_URI']);
 $request->setParameters($_REQUEST);
-
 $response = new Response();
 
-$blogController = new BlogController();
-
 $router = new Router();
-$router->addRoute('/blog/show', [$blogController, 'show']);
 
+$router->addRoute('/blog/show', BlogPostController::class, 'execute');
 
 $router->route($request, $response);
 

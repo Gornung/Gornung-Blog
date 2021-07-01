@@ -7,39 +7,46 @@ namespace Gornung\Webentwicklung;
 use Gornung\Webentwicklung\Http\IRequest;
 use Gornung\Webentwicklung\Http\IResponse;
 
-use function call_user_func;
-
-class Router
+class Router implements RouterInterface
 {
 
+    /**
+     * @var array
+     */
     protected array $routes = [];
 
     /**
-     * @param   string    $route
-     * @param   callable  $controller
+     * @param  string  $route
+     * @param  string  $controllerName
+     * @param  string  $actionName
      */
-    public function addRoute(string $route, callable $controller)
-    {
-        $this->routes[$route] = $controller;
+    public function addRoute(
+        string $route,
+        string $controllerName,
+        string $actionName
+    ): void {
+        $this->routes[$route] = [
+          'controller' => $controllerName,
+          'action'     => $actionName,
+        ];
     }
 
     /**
-     * @param   \Gornung\Webentwicklung\Http\IRequest   $request
-     * @param   \Gornung\Webentwicklung\Http\IResponse  $response
+     * @param  IRequest  $request
+     * @param  IResponse  $response
      */
-    public function route(
-      IRequest $request,
-      IResponse $response
-    ) {
+    public function route(IRequest $request, IResponse $response): void
+    {
         $url = strtolower($request->getUrl());
-        foreach ($this->routes as $route => $controller) {
+        foreach ($this->routes as $route => $controllerArray) {
             if (strpos($url, $route) !== false) {
-                \call_user_func($controller, $request, $response);
+                $controller = new $controllerArray['controller']();
+                $action     = $controllerArray['action'];
+                $controller->$action($request, $response);
                 return;
             }
         }
 
-        $response->setBody('Hello there! ;)');
+        $response->setBody('Hello there!');
     }
-
 }
