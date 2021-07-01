@@ -31,23 +31,42 @@ class Blog
             Validator::allOf(
                 Validator::notEmpty(),
                 Validator::stringType()
-            )->check($request->getParameters()['urlKey']);
-            Validator::allOf(
-                Validator::notEmpty(),
-                Validator::stringType()
             )->check($request->getParameters()['author']);
             Validator::allOf(Validator::notEmpty(), Validator::stringType())
                      ->check($request->getParameters()['text']);
 
+
+            $urlSlug = $this->generateUrlSlug(
+                $request->getParameter('title')
+            );
+
             $blogPost         = new BlogPost();
             $blogPost->title  = $request->getParameter('title');
-            $blogPost->urlKey = $request->getParameter('urlKey');
+            $blogPost->urlKey = $urlSlug;
             $blogPost->author = $request->getParameter('author');
             $blogPost->text   = $request->getParameter('text');
             $repository       = new BlogPostRepository();
             $repository->add($blogPost);
+
+            dd($blogPost);
+
             $response->setBody('great success');
         }
+    }
+
+    /**
+     * @param  string  $title
+     *
+     * @return string
+     */
+    private function generateUrlSlug(string $title): string
+    {
+        $slug = strtolower($title);
+        //replace non-alphanumerics
+        $slug = preg_replace('/[^[:alnum:]]/', ' ', $slug);
+        //replace spaces
+        $slug = preg_replace('/[[:space:]]+/', '-', $slug);
+        return trim($slug, '-');
     }
 
     /**
