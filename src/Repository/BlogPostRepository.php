@@ -24,7 +24,6 @@ class BlogPostRepository extends AbstractRepository
      * @param  string  $urlKey
      *
      * @return \Gornung\Webentwicklung\Model\BlogPost|null
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getByUrlKey(string $urlKey): ?BlogPost
     {
