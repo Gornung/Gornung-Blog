@@ -1,64 +1,123 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Gornung\Webentwicklung\Repository;
 
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Gornung\Webentwicklung\Model\BlogPost;
-use PDO;
 
 class BlogPostRepository extends AbstractRepository
 {
 
     /**
-     * BlogPostRepository constructor.
+     * @return BlogPost[]
      */
-    public function __construct()
+    public function get(): array
     {
-        $this->connectToDb();
+        return $this->getRepository()->findAll();
     }
 
 
     /**
-     * @param BlogPost $blogPost
-     */
-    public function add(BlogPost $blogPost): void
-    {
-        $query = $this->connection->prepare(
-            'insert into blog_posts (title, url_key, author, text) values (:title, :urlKey, :author, :text); '
-        );
-        $query->bindParam(':title', $blogPost->title);
-        $query->bindParam(':urlKey', $blogPost->urlKey);
-        $query->bindParam(':author', $blogPost->author);
-        $query->bindParam(':text', $blogPost->text);
-        $query->execute();
-    }
-
-
-    /**
-     * @param string $urlKey
-     * @return BlogPost|null
+     * @param  string  $urlKey
+     *
+     * @return \Gornung\Webentwicklung\Model\BlogPost|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getByUrlKey(string $urlKey): ?BlogPost
     {
-        $query = $this->connection->prepare(
-            'select * from blog_posts where url_key = :urlKey'
-        );
-        $query->bindParam(':urlKey', $urlKey);
-        $query->execute();
-        $query->setFetchMode(PDO::FETCH_ASSOC);
-        $resultData = $query->fetch();
-
-        if (!$resultData) {
+        try {
+            $result = $this->getEntityManager()
+                           ->createQueryBuilder()
+                           ->select(
+                               'post'
+                           )
+                           ->from(
+                               'Gornung\Webentwicklung\Model\BlogPost',
+                               'post'
+                           )
+                           ->where('post.urlKey like ?1')
+                           ->setParameter(1, $urlKey)
+                           ->getQuery()->getSingleResult();
+        } catch (NoResultException | NonUniqueResultException $e) {
             return null;
         }
-
-        $result         = new BlogPost();
-        $result->id     = $resultData['id'];
-        $result->title  = $resultData['title'];
-        $result->urlKey = $resultData['url_key'];
-        $result->author = $resultData['author'];
-        $result->text   = $resultData['text'];
         return $result;
+    }
+
+    /**
+     * @param  string  $keyword
+     *
+     * @return BlogPost[]
+     */
+    public function getByKeyword(string $keyword): array
+    {
+        $dql   = "
+        SELECT b.title, b.text, b.author
+          FROM Gornung\Webentwicklung\Model\BlogPost b
+          WHERE b.author like '%$keyword%' or b.title like '%$keyword%' or b.text like '%$keyword%'
+    ";
+        $query = $this->entityManager->createQuery($dql);
+
+        return $query->getResult();
+    }
+
+    /**
+     * @param  BlogPost  $blogPost
+     *
+     * @return void
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function add(BlogPost $blogPost): void
+    {
+        $this->getEntityManager()->persist($blogPost);
+        $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @param  string  $id
+     */
+    public function removeById(string $id): void
+    {
+        $blogpost = $this->getById($id);
+
+        try {
+            $this->remove($blogpost);
+        } catch (ORMException $e) {
+            echo 'ORMException';
+        }
+    }
+
+    /**
+     * @param  string  $id
+     *
+     * @return object|BlogPost
+     */
+    public function getById(string $id): BlogPost
+    {
+        return $this->getRepository()->find($id);
+    }
+
+    /**
+     * @param  BlogPost  $blogPost
+     *
+     * @return void
+     * @throws ORMException
+     */
+    public function remove(BlogPost $blogPost): void
+    {
+        $this->getEntityManager()->remove($blogPost);
+        $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntityClassName(): string
+    {
+        return BlogPost::class;
     }
 }

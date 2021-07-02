@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Gornung\Webentwicklung\Http\Request;
 use Gornung\Webentwicklung\Http\Response;
 use Gornung\Webentwicklung\Router;
-use Gornung\Webentwicklung\Controller\Blog as BlogController;
+use Gornung\Webentwicklung\Controller\BlogController as BlogController;
 use Gornung\Webentwicklung\Exceptions\NotFoundException;
 
 require __DIR__ . '/../vendor/autoload.php';

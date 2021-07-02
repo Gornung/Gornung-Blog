@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Gornung\Webentwicklung\Controller;
 
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Gornung\Webentwicklung\Http\IRequest;
 use Gornung\Webentwicklung\Http\IResponse;
 use Gornung\Webentwicklung\Model\BlogPost;
@@ -13,12 +15,14 @@ use Gornung\Webentwicklung\View\BlogPost\Add as AddView;
 use Gornung\Webentwicklung\View\BlogPost\Show as ShowView;
 use Respect\Validation\Validator;
 
-class Blog
+class BlogController
 {
 
     /**
      * @param  \Gornung\Webentwicklung\Http\IRequest  $request
      * @param  \Gornung\Webentwicklung\Http\IResponse  $response
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function add(IRequest $request, IResponse $response): void
     {
@@ -40,17 +44,39 @@ class Blog
                 $request->getParameter('title')
             );
 
-            $blogPost         = new BlogPost();
-            $blogPost->title  = $request->getParameter('title');
-            $blogPost->urlKey = $urlSlug;
-            $blogPost->author = $request->getParameter('author');
-            $blogPost->text   = $request->getParameter('text');
-            $repository       = new BlogPostRepository();
-            $repository->add($blogPost);
+            $requestTitle  = $request->getParameter('title');
+            $requestAuthor = $request->getParameter('author');
+            $requestText   = $request->getParameter('text');
 
-            dd($blogPost);
+            $blogPostModel = new BlogPost(
+                $requestTitle,
+                $requestText,
+                $requestAuthor,
+                $urlSlug
+            );
 
-            $response->setBody('great success');
+            $blogPostRepository = new BlogPostRepository();
+
+            $blogPost = $blogPostRepository->getByUrlKey($urlSlug);
+
+            $link = "show/" . $urlSlug;
+
+            try {
+                if ($blogPost == null) {
+                    $blogPostRepository->add($blogPostModel);
+                    $response->setBody(
+                        'Herzlichen Glückwunsch! Dein Blogeintrag findest du <a href="' . $link . '">hier</a>.'
+                    );
+                } else {
+                    $response->setBody(
+                        'Der Titel ist bereits vergeben, bitte gehe zurück.'
+                    );
+                }
+            } catch (OptimisticLockException | ORMException $e) {
+                $response->setBody(
+                    'Leider ist ein Fehler bei der Erstellung des Blogs entstanden.'
+                );
+            }
         }
     }
 
@@ -61,6 +87,7 @@ class Blog
      */
     private function generateUrlSlug(string $title): string
     {
+        // TODO handle Umlaute ä -> ae, right now it removes the value
         $slug = strtolower($title);
         //replace non-alphanumerics
         $slug = preg_replace('/[^[:alnum:]]/', ' ', $slug);
@@ -69,14 +96,18 @@ class Blog
         return trim($slug, '-');
     }
 
+
     /**
      * @param  \Gornung\Webentwicklung\Http\IRequest  $request
      * @param  \Gornung\Webentwicklung\Http\IResponse  $response
      *
-     * @throws \Gornung\Webentwicklung\Exceptions\NotFoundException
+     * @throws \Gornung\Webentwicklung\Exceptions\NotFoundException|\Gornung\Webentwicklung\Exceptions\DatabaseException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function show(IRequest $request, IResponse $response): void
-    {
+    public function show(
+        IRequest $request,
+        IResponse $response
+    ): void {
         $repository = new BlogPostRepository();
         $view       = new ShowView();
 
@@ -85,14 +116,10 @@ class Blog
 
         $entry = $repository->getByUrlKey($potentialUrlKey);
 
-        if (!$entry) {
+        if ($entry) {
+            $response->setBody($view->render($entry));
+        } else {
             throw new NotFoundException();
         }
-
-        foreach ($entry as $key => $item) {
-            $entry->$key = htmlspecialchars($item);
-        }
-
-        $response->setBody($view->render(['entry' => $entry]));
     }
 }

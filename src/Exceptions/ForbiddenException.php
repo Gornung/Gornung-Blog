@@ -9,7 +9,7 @@ use Exception;
 class ForbiddenException extends Exception
 {
 
-    public function __construct($message, $code = 0, Exception $previous = null)
+    public function __construct($message, $code = 401, Exception $previous = null)
     {
         // TODO: Verificate if correct setted
 
