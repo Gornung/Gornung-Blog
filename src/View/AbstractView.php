@@ -14,7 +14,7 @@ abstract class AbstractView
      */
     public function render($data): string
     {
-        extract($data->toArray);
+        extract((array)$data);
         ob_start();
         require dirname(dirname(__DIR__)) . $this->getTemplatePath();
         return ob_get_clean();

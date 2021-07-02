@@ -22,7 +22,6 @@ class BlogController
      * @param  \Gornung\Webentwicklung\Http\IRequest  $request
      * @param  \Gornung\Webentwicklung\Http\IResponse  $response
      *
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function add(IRequest $request, IResponse $response): void
     {
@@ -44,25 +43,35 @@ class BlogController
                 $request->getParameter('title')
             );
 
-            $requestTitle  = $request->getParameter('title');
-            $requestAuthor = $request->getParameter('author');
-            $requestText   = $request->getParameter('text');
-
-            $blogPostModel = new BlogPost(
-                $requestTitle,
-                $requestText,
-                $requestAuthor,
-                $urlSlug
+            // escape potential xss TODO scales bad write globaly
+            $requestTitle  = htmlspecialchars(
+                $request->getParameter('title'),
+                ENT_QUOTES,
+                'UTF-8'
+            );
+            $requestAuthor = htmlspecialchars(
+                $request->getParameter('author'),
+                ENT_QUOTES,
+                'UTF-8'
+            );
+            $requestText   = htmlspecialchars(
+                $request->getParameter('text'),
+                ENT_QUOTES,
+                'UTF-8'
             );
 
             $blogPostRepository = new BlogPostRepository();
-
-            $blogPost = $blogPostRepository->getByUrlKey($urlSlug);
-
-            $link = "show/" . $urlSlug;
+            $blogPost           = $blogPostRepository->getByUrlKey($urlSlug);
+            $link               = "show/" . $urlSlug;
 
             try {
                 if ($blogPost == null) {
+                    $blogPostModel = new BlogPost(
+                        $requestTitle,
+                        $requestText,
+                        $requestAuthor,
+                        $urlSlug
+                    );
                     $blogPostRepository->add($blogPostModel);
                     $response->setBody(
                         'Herzlichen Glückwunsch! Dein Blogeintrag findest du <a href="' . $link . '">hier</a>.'
