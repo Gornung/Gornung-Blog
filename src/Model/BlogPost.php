@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Class BlogPost
+ *
  * @package Gornung\Webentwicklung
  *
  * @ORM\Entity
@@ -24,41 +25,41 @@ class BlogPost
      * @ORM\Column(type="string")
      * @ORM\GeneratedValue(strategy="UUID")
      */
-    protected $id;
+    protected string $id;
 
     /**
      * @var string
      * @ORM\Column(type="string", nullable=false)
      */
-    protected $urlKey;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", nullable=false)
-     */
-    protected $title;
+    protected string $urlKey;
 
     /**
      * @var string
      *
      * @ORM\Column(type="string", nullable=false)
      */
-    protected $text;
+    protected string $title;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=false)
+     */
+    protected string $text;
 
     /**
      * @var string
      *
      * @ORM\Column(type="string", nullable=false)
      */
-    protected $author;
+    protected string $author;
 
     /**
      * @var int
      *
      * @ORM\Column(type="integer", nullable=false)
      */
-    protected $dateTime;
+    protected int $dateTime;
 
     /**
      * BlogPost constructor.
@@ -75,7 +76,7 @@ class BlogPost
         string $urlKey
     ) {
         $time = new DateTime();
-        //        $this->id  = generateID();
+
         $this->title    = $title;
         $this->text     = $text;
         $this->author   = $author;
@@ -162,5 +163,21 @@ class BlogPost
     public function setAuthor(string $author): void
     {
         $this->author = $author;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDateTime(): int
+    {
+        return $this->dateTime;
+    }
+
+    /**
+     * @param  int  $dateTime
+     */
+    public function setDateTime(int $dateTime): void
+    {
+        $this->dateTime = $dateTime;
     }
 }

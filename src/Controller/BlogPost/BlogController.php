@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Gornung\Webentwicklung\Controller;
+namespace Gornung\Webentwicklung\Controller\BlogPost;
 
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Gornung\Webentwicklung\Controller\AbstractController;
+use Gornung\Webentwicklung\Exceptions\AuthenticationRequiredException;
 use Gornung\Webentwicklung\Http\IRequest;
 use Gornung\Webentwicklung\Http\IResponse;
 use Gornung\Webentwicklung\Model\BlogPost;
@@ -15,28 +17,38 @@ use Gornung\Webentwicklung\View\BlogPost\Add as AddView;
 use Gornung\Webentwicklung\View\BlogPost\Show as ShowView;
 use Respect\Validation\Validator;
 
-class BlogController
+class BlogController extends AbstractController
 {
 
     /**
-     * @param  \Gornung\Webentwicklung\Http\IRequest  $request
-     * @param  \Gornung\Webentwicklung\Http\IResponse  $response
-     *
+     * @throws \Gornung\Webentwicklung\Exceptions\AuthenticationRequiredException
      */
     public function add(IRequest $request, IResponse $response): void
     {
+        //check if user is logged in
+        if (!$this->getSession()->isLoggedIn()) {
+            throw new AuthenticationRequiredException();
+        }
+
         if (!$request->hasParameter('title')) {
             $view = new AddView();
             $response->setBody($view->render([]));
         } else {
+            $title  = $request->getParameters()['title'];
+            $author = $request->getParameters()['author'];
+            $text   = $request->getParameters()['text'];
+
+            // validation-layer
             Validator::allOf(Validator::notEmpty(), Validator::stringType())
-                     ->check($request->getParameters()['title']);
+                     ->check($title);
+
             Validator::allOf(
                 Validator::notEmpty(),
                 Validator::stringType()
-            )->check($request->getParameters()['author']);
+            )->check($author);
+
             Validator::allOf(Validator::notEmpty(), Validator::stringType())
-                     ->check($request->getParameters()['text']);
+                     ->check($text);
 
 
             $urlSlug = $this->generateUrlSlug(
@@ -44,18 +56,18 @@ class BlogController
             );
 
             // escape potential xss TODO scales bad write globaly
-            $requestTitle  = htmlspecialchars(
-                $request->getParameter('title'),
+            $title  = htmlspecialchars(
+                $title,
                 ENT_QUOTES,
                 'UTF-8'
             );
-            $requestAuthor = htmlspecialchars(
-                $request->getParameter('author'),
+            $author = htmlspecialchars(
+                $author,
                 ENT_QUOTES,
                 'UTF-8'
             );
-            $requestText   = htmlspecialchars(
-                $request->getParameter('text'),
+            $text   = htmlspecialchars(
+                $text,
                 ENT_QUOTES,
                 'UTF-8'
             );
@@ -67,9 +79,9 @@ class BlogController
             try {
                 if ($blogPost == null) {
                     $blogPostModel = new BlogPost(
-                        $requestTitle,
-                        $requestText,
-                        $requestAuthor,
+                        $title,
+                        $text,
+                        $author,
                         $urlSlug
                     );
                     $blogPostRepository->add($blogPostModel);
@@ -110,13 +122,18 @@ class BlogController
      * @param  \Gornung\Webentwicklung\Http\IRequest  $request
      * @param  \Gornung\Webentwicklung\Http\IResponse  $response
      *
-     * @throws \Gornung\Webentwicklung\Exceptions\NotFoundException|\Gornung\Webentwicklung\Exceptions\DatabaseException
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Gornung\Webentwicklung\Exceptions\AuthenticationRequiredException
+     * @throws \Gornung\Webentwicklung\Exceptions\NotFoundException
      */
     public function show(
         IRequest $request,
         IResponse $response
     ): void {
+        //check if user is logged in
+        if (!$this->getSession()->isLoggedIn()) {
+            throw new AuthenticationRequiredException();
+        }
+
         $repository = new BlogPostRepository();
         $view       = new ShowView();
 

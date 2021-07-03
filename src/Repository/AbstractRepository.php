@@ -74,7 +74,7 @@ abstract class AbstractRepository
 
             // createSchema for first time, to create tables
             // TODO use it conditionally
-            //            $this->createSchema();
+//                        $this->createSchema();
         } catch (PDOException $e) {
             throw new DatabaseException(
                 'Failed to connect to Database with EntityManager',
@@ -115,7 +115,7 @@ abstract class AbstractRepository
         $schemaTool->createSchema(
             [
             $this->entityManager->getClassMetadata(
-                'Gornung\Webentwicklung\Model\BlogUser'
+                'Gornung\Webentwicklung\Model\User'
             ),
             $this->entityManager->getClassMetadata(
                 'Gornung\Webentwicklung\Model\BlogPost'

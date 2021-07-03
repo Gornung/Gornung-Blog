@@ -4,58 +4,59 @@ declare(strict_types=1);
 
 namespace Gornung\Webentwicklung\Repository;
 
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\ORMException;
-use Doctrine\ORM\Query;
-use Gornung\Webentwicklung\Model\BlogUser;
+use Gornung\Webentwicklung\Model\User;
 
 class BlogUserRepository extends AbstractRepository
 {
 
     /**
-     * @param  BlogUser  $BlogUser
+     * @param  User  $user
      *
      * @return void
      * @throws ORMException
      */
-    public function add(BlogUser $BlogUser): void
+    public function add(User $user): void
     {
-        $this->getEntityManager()->persist($BlogUser);
+        $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }
 
 
     /**
-     * @param  \Gornung\Webentwicklung\Model\BlogUser  $BlogUser
+     * @param  \Gornung\Webentwicklung\Model\User  $user
      *
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function update(BlogUser $BlogUser): void
+    public function update(User $user): void
     {
-        $this->getRepository()->find($BlogUser->getUserID());
+        $this->getRepository()->find($user->getId());
         $this->getEntityManager()->flush();
     }
 
     /**
-     * @param  string  $BlogUsername
+     * @param  string  $username
      *
-     * @return BlogUser
+     * @return User|null
      */
-    public function getByUsername(string $BlogUsername): ?BlogUser
+    public function getByUsername(string $username): ?User
     {
-        $qb = $this->getEntityManager()->createQueryBuilder()
-                   ->select('user')
-                   ->from('Gornung\Webentwicklung\Model\BlogUser', 'user')
-                   ->where('user.username = ?1')
-                   ->setParameter(1, $BlogUsername);
-
-        $query = $qb->getQuery();
-
-        if ($query->getResult(Query::HYDRATE_OBJECT) != null) {
-            return $query->getResult(Query::HYDRATE_OBJECT)[0];
-        } else {
+        try {
+            $result = $this->getEntityManager()
+                           ->createQueryBuilder()
+                           ->select('user')
+                           ->from('Gornung\Webentwicklung\Model\User', 'user')
+                           ->where('user.username like ?1')
+                           ->setParameter(1, $username)
+                           ->getQuery()
+                           ->getSingleResult();
+        } catch (NoResultException | NonUniqueResultException $e) {
             return null;
         }
+        return $result;
     }
 
     /**
@@ -63,12 +64,6 @@ class BlogUserRepository extends AbstractRepository
      */
     public function getEntityClassName(): string
     {
-        return BlogUser::class;
+        return User::class;
     }
-
-    /**
-     * @param  string  $entityName
-     *
-     * @return mixed
-     */
 }
