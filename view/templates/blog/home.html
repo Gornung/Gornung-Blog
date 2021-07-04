@@ -19,16 +19,25 @@
         <div class="container">
             <div class="row">
 <!--                can be written as component to render with given values-->
+
+                <?php if($data == null): ?>
+
+                <p class="d-flex justify-content-center text-center" role="alert">
+                    Leider haben wir keine Einträge gefunden, erstelle einen eigenen Blogeintrag.😃
+                </p>
+
+                <?php endif; ?>
+
                 <?php foreach ($data as $blogPostEntry) : ?>
                 <div class="col-md-4">
                     <div class="card mb-4 box-shadow">
+                        <div class="card-body">
 
                         <b>
-                            <div class="d-flex justify-content-center align-items-center mt-3">
+                            <div class="d-flex justify-content-center mb-3 text-truncate">
                                 <?= $blogPostEntry->getTitle() ?>
                             </div>
                         </b>
-                        <div class="card-body">
                             <p class="card-text text-truncate" style="max-height: 250px">
                                 <?= $blogPostEntry->getText();
                                 ?></p>

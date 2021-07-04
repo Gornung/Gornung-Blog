@@ -28,6 +28,7 @@
   },
   "scripts": {
     "server": "php -S gornung.local:8080",
-    "psalmCheck": "./vendor/bin/psalm --show-info=true"
+    "psalmCheck": "./vendor/bin/psalm --show-info=true",
+    "PSR12Check": "./vendor/bin/phpcs --standard=PSR12 src public/index.php"
   }
 }
