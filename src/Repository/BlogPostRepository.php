@@ -16,6 +16,7 @@ class BlogPostRepository extends AbstractRepository
      */
     public function get(): array
     {
+        // TODO: edit to give orderBy dateTime
         return $this->getRepository()->findAll();
     }
 
@@ -53,9 +54,9 @@ class BlogPostRepository extends AbstractRepository
     public function getByKeyword(string $keyword): array
     {
         $dql   = "
-        SELECT b.title, b.text, b.author
-          FROM Gornung\Webentwicklung\Model\BlogPost b
-          WHERE b.author like '%$keyword%' or b.title like '%$keyword%' or b.text like '%$keyword%'
+        SELECT post
+          FROM Gornung\Webentwicklung\Model\BlogPost post
+          WHERE post.author like '%$keyword%' or post.title like '%$keyword%' or post.text like '%$keyword%'
     ";
         $query = $this->entityManager->createQuery($dql);
 

@@ -14,7 +14,7 @@ use Gornung\Webentwicklung\View\BlogPost\Home as HomeView;
 
 class Home extends AbstractController implements IController
 {
-
+    // TODO: build BaseController
 
     /**
      * @param  \Gornung\Webentwicklung\Http\IRequest  $request

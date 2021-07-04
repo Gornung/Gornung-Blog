@@ -9,6 +9,7 @@ use Gornung\Webentwicklung\Http\Response;
 use Gornung\Webentwicklung\Router;
 use Gornung\Webentwicklung\Controller\BlogPost\BlogController;
 use Gornung\Webentwicklung\Controller\BlogPost\Search as SearchController;
+use Gornung\Webentwicklung\Controller\BlogPost\Delete as DeleteController;
 use Gornung\Webentwicklung\Controller\Auth\Login as LoginController;
 use Gornung\Webentwicklung\Controller\Auth\SignUp as SignUpController;
 use Gornung\Webentwicklung\Controller\Auth\Logout as LogoutController;
@@ -32,7 +33,7 @@ $router->addRoute('/home', HomeController::class, 'execute');
 
 $router->addRoute('/blog/show', BlogController::class, 'show');
 $router->addRoute('/blog/add', BlogController::class, 'add');
-$router->addRoute('/blog/delete', BlogController::class, 'delete');
+$router->addRoute('/blog/delete', DeleteController::class, 'delete');
 $router->addRoute('/blog/search', SearchController::class, 'execute');
 
 $router->addRoute('/auth/login', LoginController::class, 'execute');
@@ -65,9 +66,9 @@ try {
     );
 } catch (Exception $exception) {
     // 500 some error will be catched
-    dd($exception);
+//    dd($exception);
     $response->setStatusCode(500);
-    $response->setBody('Uh Oh ...');
+    $response->setBody('Leider ist etwas schiefgelaufen versuche es erneut.');
 }
 
 http_response_code($response->getStatusCode());

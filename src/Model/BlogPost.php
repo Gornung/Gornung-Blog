@@ -62,6 +62,13 @@ class BlogPost
     protected int $dateTime;
 
     /**
+     * @var null|string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected ?string $creator;
+
+    /**
      * BlogPost constructor.
      *
      * @param  string  $title
@@ -179,5 +186,22 @@ class BlogPost
     public function setDateTime(int $dateTime): void
     {
         $this->dateTime = $dateTime;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCreator(): ?string
+    {
+        return $this->creator;
+    }
+
+
+    /**
+     * @param  string|null  $creator
+     */
+    public function setCreator(?string $creator): void
+    {
+        $this->creator = $creator;
     }
 }

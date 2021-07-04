@@ -9,9 +9,9 @@ use Gornung\Webentwicklung\Controller\IController;
 use Gornung\Webentwicklung\Exceptions\AuthenticationRequiredException;
 use Gornung\Webentwicklung\Http\IRequest;
 use Gornung\Webentwicklung\Http\IResponse;
-use Gornung\Webentwicklung\Model\BlogPost;
 use Gornung\Webentwicklung\Repository\BlogPostRepository;
 use Gornung\Webentwicklung\View\BlogPost\Search as SearchView;
+use Respect\Validation\Validator as v;
 
 class Search extends AbstractController implements IController
 {
@@ -35,37 +35,25 @@ class Search extends AbstractController implements IController
 
     private function search(IRequest $request, IResponse $response)
     {
-        $keyword    = $request->getParameters()['search_txt'];
-        $repository = new BlogPostRepository();
+        $searchView = new SearchView();
 
-        if ($keyword != null) {
-            $data = $repository->getByKeyword($keyword);
+        if (!$request->hasParameter('search_keyword')) {
+            $response->setBody($searchView->render([]));
+            return;
         }
 
-        $arrayOfBlogPost = [];
+        $keyword = $request->getParameter('search_keyword');
 
-        foreach ($data as $blogPostEntry) {
-            /**
-             * @psalm-suppress UndefinedMethod
-             */
-            $title = $blogPostEntry['title'];
-            /**
-             * @psalm-suppress UndefinedMethod
-             */
-            $text = $blogPostEntry['text'];
-            /**
-             * @psalm-suppress UndefinedMethod
-             */
-            $author = $blogPostEntry['author'];
+        v::allOf(
+            v::notEmpty(),
+            v::stringType()
+        )->check($keyword);
 
-            $blogpost = new BlogPost();
-            $blogpost->setTitle($title);
-            $blogpost->setText($text);
-            $blogpost->setAuthor($author);
-            $arrayOfBlogPost[] = $blogpost;
-        }
+        $blogRepository = new BlogPostRepository();
 
-        $view = new SearchView();
-        $response->setBody($view->render($arrayOfBlogPost));
+        // can be rewritten in getByTitleTextOrAuthor($title, $text, $author) with view of those inputs
+        $foundBlogPosts = $blogRepository->getByKeyword($keyword);
+
+        $response->setBody($searchView->render($foundBlogPosts));
     }
 }

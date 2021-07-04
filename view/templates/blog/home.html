@@ -18,13 +18,14 @@
 
         <div class="container">
             <div class="row">
+<!--                can be written as component to render with given values-->
                 <?php foreach ($data as $blogPostEntry) : ?>
                 <div class="col-md-4">
                     <div class="card mb-4 box-shadow">
 
                         <b>
-                            <div class="d-flex justify-content-center align-items-center mt-3"><?= $blogPostEntry->
-                                getTitle() ?>
+                            <div class="d-flex justify-content-center align-items-center mt-3">
+                                <?= $blogPostEntry->getTitle() ?>
                             </div>
                         </b>
                         <div class="card-body">
@@ -39,7 +40,7 @@
                                 </div>
                                 <a href="">
                                     <i class="bi bi-hand-thumbs-up">
-                                        <span>2 Likes</span>
+                                        <span>0 Likes</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                              fill="currentColor"
                                              class="bi bi-hand-thumbs-up" viewBox="0 0 16 16">

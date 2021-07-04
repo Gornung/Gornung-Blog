@@ -15,6 +15,8 @@ use Gornung\Webentwicklung\Repository\BlogUserRepository;
 use Gornung\Webentwicklung\View\Auth\Login as LoginView;
 use Respect\Validation\Validator as v;
 
+use function mysql_xdevapi\getSession;
+
 class Login extends AbstractController implements IController
 {
 
@@ -88,9 +90,16 @@ class Login extends AbstractController implements IController
                 $user->setPassword($rehashedPassword);
                 $userRepository->update($user);
             }
+
+
             // successful login
+            // should not set this way entry better use constance such as LOGIN_INDICATOR_KEY
+            $this->getSession()->setEntry('username', $username);
+            $this->getSession()->setEntry('isAdmin', $user->getAdminStatus());
             $this->getSession()->login();
-            $this->getSession()->setSessionUsername($username);
+
+            // just for demonstration sets Session as Admin doesnt set the DB value right with username admin
+            $this->setAdminForAdminUsername($username);
 
             $redirect = new Redirect('/home', $response);
             $redirect->execute();
@@ -100,7 +109,7 @@ class Login extends AbstractController implements IController
             // TODO: transfer functionality "renderAlert" as function
             $error = [
               'errorMessage' =>
-                'Username oder Passwort ist falsch oder den Account gibt es nicht.'
+                'Username oder Passwort ist falsch oder den Account gibt es nicht.',
             ];
             $response->setBody($loginView->render($error));
         }
@@ -113,5 +122,15 @@ class Login extends AbstractController implements IController
     {
         $view = new LoginView();
         $response->setBody($view->render([]));
+    }
+
+    /**
+     * @param  string  $username
+     */
+    private function setAdminForAdminUsername(string $username): void
+    {
+        if ($username == 'admin') {
+            $this->getSession()->setEntry('isAdmin', true);
+        }
     }
 }
