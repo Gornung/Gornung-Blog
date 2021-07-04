@@ -68,6 +68,24 @@ class User
     }
 
     /**
+     * @return bool
+     */
+    public function getAdminStatus(): bool
+    {
+        return $this->isAdmin;
+    }
+
+    /**
+     * @param  bool  $isAdmin
+     *
+     * @return bool
+     */
+    public function setAdminStatus(bool $isAdmin): bool
+    {
+        return $this->isAdmin = $isAdmin;
+    }
+
+    /**
      * @return string
      */
     public function getId(): string
@@ -94,8 +112,9 @@ class User
     /**
      * @param  string  $email
      */
-    public function setEmail(string $email): void
-    {
+    public function setEmail(
+        string $email
+    ): void {
         $this->email = $email;
     }
 
@@ -110,8 +129,9 @@ class User
     /**
      * @param  bool  $isAdmin
      */
-    public function setIsAdmin(bool $isAdmin): void
-    {
+    public function setIsAdmin(
+        bool $isAdmin
+    ): void {
         $this->isAdmin = $isAdmin;
     }
 
@@ -126,8 +146,9 @@ class User
     /**
      * @param  string  $username
      */
-    public function setUsername(string $username): void
-    {
+    public function setUsername(
+        string $username
+    ): void {
         $this->username = $username;
     }
 
@@ -142,8 +163,9 @@ class User
     /**
      * @param  string  $password
      */
-    public function setPassword(string $password): void
-    {
+    public function setPassword(
+        string $password
+    ): void {
         $this->password = $password;
     }
 
@@ -158,8 +180,9 @@ class User
     /**
      * @param  int  $dateTime
      */
-    public function setDateTime(int $dateTime): void
-    {
+    public function setDateTime(
+        int $dateTime
+    ): void {
         $this->dateTime = $dateTime;
     }
 }

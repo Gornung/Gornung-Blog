@@ -9,12 +9,30 @@ class Session
 
     protected const LOGIN_INDICATOR_KEY = 'isLoggedIn';
 
+    protected ?string $sessionUsername = null;
+
     /**
      * @var array
      */
     protected array $defaultOptions = [
       'cookie_httponly' => true,
     ];
+
+    /**
+     * @return string|null
+     */
+    public function getSessionUsername(): ?string
+    {
+        return $this->sessionUsername;
+    }
+
+    /**
+     * @param  string|null  $sessionUsername
+     */
+    public function setSessionUsername(?string $sessionUsername): void
+    {
+        $this->sessionUser = $sessionUsername;
+    }
 
     /**
      * @return bool

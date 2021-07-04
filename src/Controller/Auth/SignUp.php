@@ -8,7 +8,6 @@ use Doctrine\ORM\ORMException;
 use Gornung\Webentwicklung\Controller\IController;
 use Gornung\Webentwicklung\Http\IRequest;
 use Gornung\Webentwicklung\Http\IResponse;
-use Gornung\Webentwicklung\Http\Redirect;
 use Gornung\Webentwicklung\Model\User;
 use Gornung\Webentwicklung\Repository\BlogUserRepository;
 use Gornung\Webentwicklung\View\Auth\SignUp as SignUpView;
@@ -30,25 +29,49 @@ class SignUp implements IController
      * @param  \Gornung\Webentwicklung\Http\IRequest  $request
      * @param  \Gornung\Webentwicklung\Http\IResponse  $response
      */
-    private function signUp(IRequest $request, IResponse $response)
+    public function signUp(IRequest $request, IResponse $response): void
     {
-        $username         = $request->getParameters()['username'];
-        $password         = $request->getParameters()['password'];
-        $emailAddress     = $request->getParameters()['email'];
-        $confirm_password = $request->getParameters()['confirm_password'];
+        $username        = trim($request->getParameters()['username']);
+        $emailAddress    = trim($request->getParameters()['email']);
+        $password        = $request->getParameters()['password'];
+        $confirmPassword = $request->getParameters()['confirm_password'];
 
-        v::allOf(v::notEmpty(), v::length(5, 100), v::stringType())->check(
-            $username
-        );
+        v::anyOf(
+            v::notEmpty(),
+            v::stringType(),
+            v::length(5)
+        )->check($username);
 
-        v::anyOf(v::email(), v::length(5))->check(trim($username));
-        v::stringType()->check(trim($emailAddress));
+        v::allOf(
+            v::notEmpty(),
+            v::stringType(),
+            v::email()
+        )->check($emailAddress);
 
-        v::length(8, 50)->setName('Password')->check($password);
-        v::stringType()->check($password);
+        v::anyOf(
+            v::notEmpty(),
+            v::stringType(),
+            v::length(8, 50)
+        )->check($password);
 
-        if (strcmp($password, $confirm_password) != 0) {
-            $this->handleForm($response);
+        v::anyOf(
+            v::notEmpty(),
+            v::stringType(),
+            v::length(8, 50)
+        )->check($confirmPassword);
+
+        $signUpView = new SignUpView();
+
+        if (strcmp($password, $confirmPassword) != 0) {
+            // TODO: transfer functionality "renderAlert" as function
+            $error = [
+              'errorMessage' =>
+                'Die Passwörter sind nicht identisch.',
+            ];
+            // issue with this kind of rerender the values getting lost
+            // TODO: Fix rerender, without losing input-data
+            $response->setBody($signUpView->render($error));
+            return;
         }
 
         // escape potential xss TODO scales bad write globaly
@@ -68,30 +91,36 @@ class SignUp implements IController
         $userRepository = new BlogUserRepository();
         $user           = $userRepository->getByUsername($username);
 
+
         try {
             if ($user == null) {
                 $userModel = new User($username, $password, $emailAddress);
                 $userRepository->add($userModel);
-                $response->setBody(
-                    'Herzlichen Glückwunsch! Du bist nun erfolgreich registriert.'
-                );
+                // TODO: transfer functionality "renderAlert" as function
+                $success = [
+                  'successMessage' =>
+                    'Herzlichen Glückwunsch! Melde dich <a href="/auth/login">hier</a> an.',
+                ];
+                $response->setBody($signUpView->render($success));
             } else {
-                $response->setBody(
-                    'Der User ist bereits vergeben, bitte gehe zurück.'
-                );
+                // TODO: transfer functionality "renderAlert" as function
+                $error = [
+                  'errorMessage' =>
+                    'Der User ist bereits vergeben! Bitte wähle einen anderen Usernamen.',
+                ];
+                $response->setBody($signUpView->render($error));
             }
         } catch (ORMException $e) {
-            $response->setBody(
-                'Leider ist ein Fehler bei der Erstellung des Users entstanden.'
-            );
+            // TODO: transfer functionality "renderAlert" as function
+            $error = [
+              'errorMessage' =>
+                'Leider ist ein Fehler bei der Erstellung des Users entstanden. Versuche es erneut',
+            ];
+            $response->setBody($signUpView->render($error));
         }
-
-        //redirect to Login page
-        $redirect = new Redirect('/auth/login', $response);
-        $redirect->execute();
     }
 
-    public function handleForm(IResponse $response)
+    private function handleForm(IResponse $response)
     {
         $view = new SignUpView();
         $response->setBody($view->render([]));

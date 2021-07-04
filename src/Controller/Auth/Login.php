@@ -27,7 +27,7 @@ class Login extends AbstractController implements IController
         if (isset($request->getParameters()['username'])) {
             $this->login($request, $response);
         } elseif ($this->getSession()->isLoggedIn()) {
-            //if allready logged in route to /home
+            //if already logged in route to /home
             $redirect = new Redirect('/home', $response);
             $redirect->execute();
         } else {
@@ -44,14 +44,20 @@ class Login extends AbstractController implements IController
      */
     public function login(IRequest $request, IResponse $response): void
     {
-        $username = $request->getParameters()['username'];
+        $username = trim($request->getParameters()['username']);
         $password = $request->getParameters()['password'];
 
-        v::anyOf(v::notEmpty(), v::length(5, 100))->validate(trim($username));
-        v::stringType()->validate(trim($username));
+        v::anyOf(
+            v::notEmpty(),
+            v::stringType(),
+            v::length(5)
+        )->check($username);
 
-        v::length(8, 50)->setName('Password')->check($password);
-        v::stringType()->check($password);
+        v::anyOf(
+            v::notEmpty(),
+            v::stringType(),
+            v::length(8, 50)
+        )->check($password);
 
         $username = htmlspecialchars(
             $username,
@@ -84,15 +90,19 @@ class Login extends AbstractController implements IController
             }
             // successful login
             $this->getSession()->login();
+            $this->getSession()->setSessionUsername($username);
 
             $redirect = new Redirect('/home', $response);
             $redirect->execute();
         } else {
             // failed login
-            $response->setStatusCode(401);
-            $response->setBody(
+            $loginView = new LoginView();
+            // TODO: transfer functionality "renderAlert" as function
+            $error = [
+              'errorMessage' =>
                 'Username oder Passwort ist falsch oder den Account gibt es nicht.'
-            );
+            ];
+            $response->setBody($loginView->render($error));
         }
     }
 

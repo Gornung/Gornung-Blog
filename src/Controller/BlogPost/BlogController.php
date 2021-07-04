@@ -10,6 +10,7 @@ use Gornung\Webentwicklung\Controller\AbstractController;
 use Gornung\Webentwicklung\Exceptions\AuthenticationRequiredException;
 use Gornung\Webentwicklung\Http\IRequest;
 use Gornung\Webentwicklung\Http\IResponse;
+use Gornung\Webentwicklung\Http\Redirect;
 use Gornung\Webentwicklung\Model\BlogPost;
 use Gornung\Webentwicklung\Exceptions\NotFoundException;
 use Gornung\Webentwicklung\Repository\BlogPostRepository;
@@ -85,9 +86,8 @@ class BlogController extends AbstractController
                         $urlSlug
                     );
                     $blogPostRepository->add($blogPostModel);
-                    $response->setBody(
-                        'Herzlichen Glückwunsch! Dein Blogeintrag findest du <a href="' . $link . '">hier</a>.'
-                    );
+                    $redirect = new Redirect("$link", $response);
+                    $redirect->execute();
                 } else {
                     $response->setBody(
                         'Der Titel ist bereits vergeben, bitte gehe zurück.'

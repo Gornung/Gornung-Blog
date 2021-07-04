@@ -19,7 +19,6 @@ class BlogPostRepository extends AbstractRepository
         return $this->getRepository()->findAll();
     }
 
-
     /**
      * @param  string  $urlKey
      *

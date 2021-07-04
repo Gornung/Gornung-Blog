@@ -8,16 +8,40 @@ abstract class AbstractView
 {
 
     /**
+     *
+     */
+    protected const TEMPLATE_PLACEHOLDER_CONTENT = '{{content}}';
+
+    /**
      * @param  mixed  $data
      *
      * @return string
      */
     public function render($data): string
     {
-        extract((array)$data);
+        // TODO need refactor using method to be type safe getting now objects and arrays
+        // maybe give multiple data values
+        // extract($data);
+        ob_start();
+        require dirname(dirname(__DIR__)) . $this->getBaseTemplatePath();
+        $baseTemplate = ob_get_clean();
         ob_start();
         require dirname(dirname(__DIR__)) . $this->getTemplatePath();
-        return ob_get_clean();
+        $contentTemplate = ob_get_clean();
+
+        return str_replace(
+            static::TEMPLATE_PLACEHOLDER_CONTENT,
+            $contentTemplate,
+            $baseTemplate
+        );
+    }
+
+    /**
+     * @return string
+     */
+    protected function getBaseTemplatePath(): string
+    {
+        return '/view/templates/base.html';
     }
 
     /**
