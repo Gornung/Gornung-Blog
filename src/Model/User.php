@@ -24,6 +24,8 @@ class User
     protected int $dateTime;
 
     /**
+     * @psalm-suppress PropertyNotSetInConstructor
+     *
      * @var string
      *
      * @ORM\Id
@@ -56,8 +58,11 @@ class User
      */
     private string $password;
 
-    public function __construct($username, $password, $email)
-    {
+    public function __construct(
+        string $username,
+        string $password,
+        string $email
+    ) {
         $time = new DateTime();
 
         $this->username = $username;

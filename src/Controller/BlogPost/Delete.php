@@ -4,24 +4,38 @@ declare(strict_types=1);
 
 namespace Gornung\Webentwicklung\Controller\BlogPost;
 
+use Gornung\Webentwicklung\Controller\AbstractController;
+use Gornung\Webentwicklung\Exceptions\AuthenticationRequiredException;
+use Gornung\Webentwicklung\Exceptions\ForbiddenException;
 use Gornung\Webentwicklung\Http\IRequest;
 use Gornung\Webentwicklung\Http\IResponse;
 use Gornung\Webentwicklung\Http\Redirect;
-use Gornung\Webentwicklung\Controller\AbstractController;
 use Gornung\Webentwicklung\Repository\BlogPostRepository;
 use Gornung\Webentwicklung\Repository\BlogUserRepository;
 
 class Delete extends AbstractController
 {
 
+
     /**
      * gets url slug then id and run remove
      *
      * @param  \Gornung\Webentwicklung\Http\IRequest  $request
      * @param  \Gornung\Webentwicklung\Http\IResponse  $response
+     *
+     * @throws \Gornung\Webentwicklung\Exceptions\AuthenticationRequiredException
+     * @throws \Gornung\Webentwicklung\Exceptions\ForbiddenException
      */
     public function delete(IRequest $request, IResponse $response): void
     {
+        if (!$this->getSession()->isLoggedIn()) {
+            throw new AuthenticationRequiredException();
+        }
+
+        if (!$this->getSession()->getEntry('isAdmin')) {
+            throw new ForbiddenException();
+        }
+
         $blogPostRepository = new BlogPostRepository();
         $lastSlash          = strripos($request->getUrl(), '/') ?: 0;
         $potentialUrlKey    = substr($request->getUrl(), $lastSlash + 1);
@@ -64,5 +78,4 @@ class Delete extends AbstractController
 
         return $user->getAdminStatus();
     }
-
 }

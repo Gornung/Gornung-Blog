@@ -23,9 +23,15 @@ abstract class AbstractView
         // maybe give multiple data values
         // extract($data);
         ob_start();
+        /**
+         * @psalm-suppress UnresolvableInclude
+         */
         require dirname(dirname(__DIR__)) . $this->getBaseTemplatePath();
         $baseTemplate = ob_get_clean();
         ob_start();
+        /**
+         * @psalm-suppress UnresolvableInclude
+         */
         require dirname(dirname(__DIR__)) . $this->getTemplatePath();
         $contentTemplate = ob_get_clean();
 

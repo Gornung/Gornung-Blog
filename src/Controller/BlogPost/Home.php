@@ -33,7 +33,10 @@ class Home extends AbstractController implements IController
         $this->handle($response);
     }
 
-    public function handle(IResponse $response)
+    /**
+     * @param  \Gornung\Webentwicklung\Http\IResponse  $response
+     */
+    public function handle(IResponse $response): void
     {
         $repository = new BlogPostRepository();
         $data       = $repository->get();

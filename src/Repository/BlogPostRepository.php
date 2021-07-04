@@ -84,6 +84,9 @@ class BlogPostRepository extends AbstractRepository
         $blogpost = $this->getById($id);
 
         try {
+            /**
+             * @psalm-suppress ArgumentTypeCoercion
+             */
             $this->remove($blogpost);
         } catch (ORMException $e) {
             echo 'ORMException';
@@ -93,7 +96,7 @@ class BlogPostRepository extends AbstractRepository
     /**
      * @param  string  $id
      *
-     * @return object|BlogPost
+     * @return BlogPost
      */
     public function getById(string $id): BlogPost
     {

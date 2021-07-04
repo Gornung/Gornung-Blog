@@ -9,15 +9,13 @@ use Exception;
 class ForbiddenException extends Exception
 {
 
-    public function __construct($message, $code = 401, Exception $previous = null)
-    {
-        // TODO: Verificate if correct setted
+    /**
+     * @var string
+     */
+    protected $message = 'Sie sind dazu nicht berechtigt.';
 
-        parent::__construct($message, $code, $previous);
-    }
-
-    public function __toString()
-    {
-        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
-    }
+    /**
+     * @var int
+     */
+    protected $code = 403;
 }

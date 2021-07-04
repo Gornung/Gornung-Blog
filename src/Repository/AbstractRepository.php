@@ -15,7 +15,7 @@ use PDOException;
 abstract class AbstractRepository
 {
 
-    protected $entityManager;
+    protected EntityManager $entityManager;
 
     /**
      * AbstractRepository constructor.
@@ -35,11 +35,10 @@ abstract class AbstractRepository
     }
 
     /**
-     * Create Doctrine's Entity Manager
-     *
-     * @throws DatabaseException|\Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Gornung\Webentwicklung\Exceptions\DatabaseException
      */
-    private function createEntityManager()
+    private function createEntityManager(): void
     {
         $dotenv = Dotenv::createImmutable(dirname(dirname(__DIR__)));
         $dotenv->load();
@@ -84,16 +83,6 @@ abstract class AbstractRepository
     }
 
     /**
-     * @return \Doctrine\ORM\EntityRepository|\Doctrine\Persistence\ObjectRepository
-     */
-    protected function getRepository(): object
-    {
-        return $this->getEntityManager()->getRepository(
-            $this->getEntityClassName()
-        );
-    }
-
-    /**
      * @return EntityManager
      */
     protected function getEntityManager(): EntityManager
@@ -102,15 +91,11 @@ abstract class AbstractRepository
     }
 
     /**
-     * @return string
-     */
-    abstract public function getEntityClassName(): string;
-
-    /**
      * @throws \Doctrine\ORM\Tools\ToolsException
      */
-    private function createSchema()
+    private function createSchema(): void
     {
+
         $schemaTool = new SchemaTool($this->entityManager);
         $schemaTool->createSchema(
             [
@@ -123,4 +108,22 @@ abstract class AbstractRepository
             ]
         );
     }
+
+    /**
+     * @return object
+     */
+    protected function getRepository(): object
+    {
+        /**
+         * @psalm-suppress ArgumentTypeCoercion
+         */
+        return $this->getEntityManager()->getRepository(
+            $this->getEntityClassName()
+        );
+    }
+
+    /**
+     * @return string
+     */
+    abstract public function getEntityClassName(): string;
 }

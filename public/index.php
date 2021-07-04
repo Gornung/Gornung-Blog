@@ -2,30 +2,29 @@
 
 declare(strict_types=1);
 
+use Gornung\Webentwicklung\Controller\Auth\Login as LoginController;
+use Gornung\Webentwicklung\Controller\Auth\Logout as LogoutController;
+use Gornung\Webentwicklung\Controller\Auth\SignUp as SignUpController;
+use Gornung\Webentwicklung\Controller\BlogPost\BlogController;
+use Gornung\Webentwicklung\Controller\BlogPost\Delete as DeleteController;
+use Gornung\Webentwicklung\Controller\BlogPost\Home as HomeController;
+use Gornung\Webentwicklung\Controller\BlogPost\Search as SearchController;
 use Gornung\Webentwicklung\Exceptions\AuthenticationRequiredException;
+use Gornung\Webentwicklung\Exceptions\ForbiddenException;
+use Gornung\Webentwicklung\Exceptions\NotFoundException;
 use Gornung\Webentwicklung\Http\Redirect;
 use Gornung\Webentwicklung\Http\Request;
 use Gornung\Webentwicklung\Http\Response;
 use Gornung\Webentwicklung\Router;
-use Gornung\Webentwicklung\Controller\BlogPost\BlogController;
-use Gornung\Webentwicklung\Controller\BlogPost\Search as SearchController;
-use Gornung\Webentwicklung\Controller\BlogPost\Delete as DeleteController;
-use Gornung\Webentwicklung\Controller\Auth\Login as LoginController;
-use Gornung\Webentwicklung\Controller\Auth\SignUp as SignUpController;
-use Gornung\Webentwicklung\Controller\Auth\Logout as LogoutController;
-use Gornung\Webentwicklung\Exceptions\NotFoundException;
-use Gornung\Webentwicklung\Controller\BlogPost\Home as HomeController;
 use Respect\Validation\Exceptions\ValidationException;
 
 date_default_timezone_set('Europe/Berlin');
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$request = new Request();
-$request->setUrl($_SERVER['REQUEST_URI']);
-$request->setParameters($_REQUEST);
+$request = new Request($_SERVER['REQUEST_URI'], $_REQUEST);
 
-$response = new Response();
+$response = new Response('', 200, []);
 $router   = new Router();
 $redirect = new Redirect('/home', $response);
 
@@ -64,9 +63,11 @@ try {
     $response->setBody(
         'Bei der Validierung ist es zu einem Fehler gekommen. Versuche es erneut'
     );
+} catch (ForbiddenException $exception) {
+    $response->setStatusCode($exception->getCode());
+    $response->setBody($exception->getMessage());
 } catch (Exception $exception) {
     // 500 some error will be catched
-//    dd($exception);
     $response->setStatusCode(500);
     $response->setBody('Leider ist etwas schiefgelaufen versuche es erneut.');
 }

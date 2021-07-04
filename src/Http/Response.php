@@ -23,6 +23,20 @@ class Response implements IResponse
     protected array $headers;
 
     /**
+     * Response constructor.
+     *
+     * @param  string  $body
+     * @param  int  $statusCode
+     * @param  array  $headers
+     */
+    public function __construct(string $body, int $statusCode, array $headers)
+    {
+        $this->body       = $body;
+        $this->statusCode = $statusCode;
+        $this->headers    = $headers;
+    }
+
+    /**
      * @return string
      */
     public function getBody(): string

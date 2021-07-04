@@ -19,6 +19,8 @@ class BlogPost
 {
 
     /**
+     * @psalm-suppress PropertyNotSetInConstructor
+     *
      * @var string
      *
      * @ORM\Id
@@ -62,6 +64,8 @@ class BlogPost
     protected int $dateTime;
 
     /**
+     * @psalm-suppress PropertyNotSetInConstructor
+     *
      * @var null|string
      *
      * @ORM\Column(type="string", nullable=true)

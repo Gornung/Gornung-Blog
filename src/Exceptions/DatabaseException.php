@@ -7,13 +7,23 @@ use Exception;
 class DatabaseException extends Exception
 {
 
-    public function __construct($message, $code = 500, Exception $previous = null)
+    /**
+     * DatabaseException constructor.
+     *
+     * @param  string  $message
+     * @param  int  $code
+     * @param  \Exception|null  $previous
+     */
+    public function __construct(string $message, int $code = 500, Exception $previous = null)
     {
         // TODO: Verificate if correct setted
         parent::__construct($message, $code, $previous);
     }
 
-    public function __toString()
+    /**
+     * @return string
+     */
+    public function __toString(): string
     {
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }

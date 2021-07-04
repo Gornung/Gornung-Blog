@@ -33,7 +33,11 @@ class Search extends AbstractController implements IController
         $this->search($request, $response);
     }
 
-    private function search(IRequest $request, IResponse $response)
+    /**
+     * @param  \Gornung\Webentwicklung\Http\IRequest  $request
+     * @param  \Gornung\Webentwicklung\Http\IResponse  $response
+     */
+    private function search(IRequest $request, IResponse $response): void
     {
         $searchView = new SearchView();
 

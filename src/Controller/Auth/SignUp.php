@@ -93,7 +93,7 @@ class SignUp implements IController
 
 
         try {
-            if ($user == null) {
+            if ($user == null && $password != null && $emailAddress != null) {
                 $userModel = new User($username, $password, $emailAddress);
                 $userRepository->add($userModel);
                 // TODO: transfer functionality "renderAlert" as function
@@ -120,7 +120,10 @@ class SignUp implements IController
         }
     }
 
-    private function handleForm(IResponse $response)
+    /**
+     * @param  \Gornung\Webentwicklung\Http\IResponse  $response
+     */
+    private function handleForm(IResponse $response): void
     {
         $view = new SignUpView();
         $response->setBody($view->render([]));

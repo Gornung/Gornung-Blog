@@ -11,7 +11,14 @@ class Redirect implements IRedirect
 
     private IResponse $response;
 
-    public function __construct($route, IResponse $response)
+
+    /**
+     * Redirect constructor.
+     *
+     * @param  string  $route
+     * @param  \Gornung\Webentwicklung\Http\IResponse  $response
+     */
+    public function __construct(string $route, IResponse $response)
     {
         $this->route    = $route;
         $this->response = $response;
@@ -24,6 +31,9 @@ class Redirect implements IRedirect
         $this->response->setStatusCode(307);
     }
 
+    /**
+     * @param  string  $route
+     */
     public function redirect(string $route): void
     {
         header("Location: " . $route);

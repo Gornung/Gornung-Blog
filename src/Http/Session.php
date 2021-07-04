@@ -81,9 +81,11 @@ class Session
     /**
      * @param  string  $name
      *
-     * @return string
+     * can be bool or string supported in php 8.0
+     *
+     * @return mixed
      */
-    public function getEntry(string $name): string
+    public function getEntry(string $name)
     {
         return $_SESSION[$name];
     }

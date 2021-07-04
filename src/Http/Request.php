@@ -18,6 +18,18 @@ class Request implements IRequest
     protected array $parameters;
 
     /**
+     * Request constructor.
+     *
+     * @param  string  $url
+     * @param  array  $parameters
+     */
+    public function __construct(string $url, array $parameters)
+    {
+        $this->url        = $url;
+        $this->parameters = $parameters;
+    }
+
+    /**
      * @return string
      */
     public function getUrl(): string

@@ -14,7 +14,7 @@ interface IController
      * @param  \Gornung\Webentwicklung\Http\IRequest  $request
      * @param  \Gornung\Webentwicklung\Http\IResponse  $response
      *
-     * @return mixed
+     * @return void
      */
     public function execute(IRequest $request, IResponse $response): void;
 }

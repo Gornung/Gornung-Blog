@@ -153,6 +153,9 @@ class BlogController extends AbstractController
         // TODO: Write BaseController with Session to get admin differently
         // add to entry object the Session
         if ($entry != null) {
+            /**
+             * @psalm-suppress UndefinedPropertyAssignment
+             */
             $entry->{"session"} = $this->getSession()->getEntries();
         }
 
