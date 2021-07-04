@@ -14,6 +14,7 @@ use Gornung\Webentwicklung\Http\Redirect;
 use Gornung\Webentwicklung\Model\BlogPost;
 use Gornung\Webentwicklung\Exceptions\NotFoundException;
 use Gornung\Webentwicklung\Repository\BlogPostRepository;
+use Gornung\Webentwicklung\Repository\BlogUserRepository;
 use Gornung\Webentwicklung\View\BlogPost\Add as AddView;
 use Gornung\Webentwicklung\View\BlogPost\Show as ShowView;
 use Respect\Validation\Validator;
@@ -26,7 +27,6 @@ class BlogController extends AbstractController
      */
     public function add(IRequest $request, IResponse $response): void
     {
-        //check if user is logged in
         if (!$this->getSession()->isLoggedIn()) {
             throw new AuthenticationRequiredException();
         }
@@ -147,5 +147,54 @@ class BlogController extends AbstractController
         } else {
             throw new NotFoundException();
         }
+    }
+
+    /**
+     * @param  \Gornung\Webentwicklung\Http\IRequest  $request
+     * @param  \Gornung\Webentwicklung\Http\IResponse  $response
+     *
+     * @throws \Gornung\Webentwicklung\Exceptions\AuthenticationRequiredException
+     */
+    public function delete(IRequest $request, IResponse $response): void
+    {
+        if (!$this->getSession()->isLoggedIn()) {
+            throw new AuthenticationRequiredException();
+        }
+
+        if (!$this->isAdmin()) {
+            return;
+        }
+
+        $blogPostRepository = new BlogPostRepository();
+
+
+        $idHardcoded = '3113a805-d65a-11ea-b85f-54ee75d56bf9';
+        //$id =
+        //$blogPostRepository->removeById($id);
+    }
+
+    /**
+     * @return bool
+     */
+    private function isAdmin(): bool
+    {
+        if (!$this->getSession()->isLoggedIn()) {
+            return false;
+        }
+
+        $username = $this->getSession()->getSessionUsername();
+
+        if ($username == null) {
+            return false;
+        }
+
+        $userRepository = new BlogUserRepository();
+        $user           = $userRepository->getByUsername($username);
+
+        if ($user == null) {
+            return false;
+        }
+
+        return $user->getAdminStatus();
     }
 }

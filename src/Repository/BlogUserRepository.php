@@ -13,6 +13,14 @@ class BlogUserRepository extends AbstractRepository
 {
 
     /**
+     * @return User[]
+     */
+    public function get(): array
+    {
+        return $this->getRepository()->findAll();
+    }
+
+    /**
      * @param  User  $user
      *
      * @return void

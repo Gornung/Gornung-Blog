@@ -1,0 +1,51 @@
+<form action="/blog/search" method="post">
+    <h2>Blog Suchen</h2>
+    <p>Bitte Werte zur suche eingeben.</p>
+    <hr>
+    <div class="form-group">
+
+        <?php if(array_key_exists('successMessage', $data)): ?>
+
+        <div class="alert alert-success text-center" role="alert">
+            <?php echo $data['successMessage']; ?>
+        </div>
+
+        <?php endif; ?>
+
+        <?php if(array_key_exists('errorMessage', $data)): ?>
+
+        <div class="alert alert-danger text-center" role="alert">
+            <?php echo $data['errorMessage']; ?>
+        </div>
+
+        <?php endif; ?>
+
+
+        <div class="input-group">
+            <div class="input-group-prepend">
+					<span class="input-group-text">
+						<span class="fa fa-user"></span>
+					</span>
+            </div>
+            <input pattern=".{5,100}" title="Bitte 5-100 Zeichen eingeben!" type="text" class="form-control"
+                   name="username" placeholder="Username" required="required">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-prepend">
+					<span class="input-group-text">
+						<i class="fa fa-paper-plane"></i>
+					</span>
+            </div>
+            <input pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                   title="Bitte geben Sie eine gültige E-mail an!" type="email" class="form-control"
+                   name="email" placeholder="Email Addresse"
+                   required="required">
+        </div>
+    </div>
+
+    <div class="form-group text-center">
+        <button type="submit" class="btn btn-primary btn-lg ">Jetzt Suchen</button>
+    </div>
+</form>

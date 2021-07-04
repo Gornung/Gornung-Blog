@@ -6,7 +6,7 @@
         <div class="container">
             <h1 class="jumbotron-heading">Blog Beispiele</h1>
             <p class="lead text-muted">Erstelle jetzt einfach einen eigenen Blogbeitrag ;) Oder willst Du dich vorher
-                noch inspirieren lassen, dann such doch nach einem bestimmten Titel.</p>
+                noch inspirieren lassen, dann such doch nach einem bestimmten Titel, Autor oder Textinhalt.</p>
             <p>
                 <a href="/blog/add" class="btn btn-primary my-2">Blog jetzt erstellen!</a>
                 <a href="/blog/search" class="btn btn-secondary my-2">Eintrag jetzt suchen!</a>
@@ -21,22 +21,25 @@
                 <?php foreach ($data as $blogPostEntry) : ?>
                 <div class="col-md-4">
                     <div class="card mb-4 box-shadow">
-                        <div class="d-flex justify-content-center align-items-center mt-3"><?= $blogPostEntry->
-                            getTitle() ?>
-                        </div>
+
+                        <b>
+                            <div class="d-flex justify-content-center align-items-center mt-3"><?= $blogPostEntry->
+                                getTitle() ?>
+                            </div>
+                        </b>
                         <div class="card-body">
-                            <p class="card-text text-truncate" style="max-height: 250px"><?= $blogPostEntry->getText()
+                            <p class="card-text text-truncate" style="max-height: 250px">
+                                <?= $blogPostEntry->getText();
                                 ?></p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
-                                    <button href="/auth/logout" type="button" class="btn btn-sm btn-outline-secondary">
-                                        Ansehen
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-outline-danger">Löschen</button>
+                                    <a href="/blog/show/<?=$blogPostEntry->getUrlKey()?>" class="btn btn-sm btn-outline-secondary">
+                                            Jetzt lesen!
+                                    </a>
                                 </div>
                                 <a href="">
                                     <i class="bi bi-hand-thumbs-up">
-                                        <span>Likes</span>
+                                        <span>2 Likes</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                              fill="currentColor"
                                              class="bi bi-hand-thumbs-up" viewBox="0 0 16 16">
@@ -44,8 +47,9 @@
                                         </svg>
                                     </i></a>
                             </div>
-                                <div class="text-center">von <?= $blogPostEntry->getAuthor()
-                                    ?></div>
+                            <small class="d-block text-center text-muted mt-3">
+                                von <?= $blogPostEntry->getAuthor() ?>
+                            </small>
                         </div>
                     </div>
                 </div>
