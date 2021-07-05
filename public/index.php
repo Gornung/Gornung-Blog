@@ -9,13 +9,14 @@ use Gornung\Webentwicklung\Controller\BlogPost\BlogController;
 use Gornung\Webentwicklung\Controller\BlogPost\Delete as DeleteController;
 use Gornung\Webentwicklung\Controller\BlogPost\Home as HomeController;
 use Gornung\Webentwicklung\Controller\BlogPost\Search as SearchController;
+use Gornung\Webentwicklung\Controller\BlogPost\Edit as EditController;
 use Gornung\Webentwicklung\Exceptions\AuthenticationRequiredException;
 use Gornung\Webentwicklung\Exceptions\ForbiddenException;
 use Gornung\Webentwicklung\Exceptions\NotFoundException;
 use Gornung\Webentwicklung\Http\Redirect;
 use Gornung\Webentwicklung\Http\Request;
 use Gornung\Webentwicklung\Http\Response;
-use Gornung\Webentwicklung\Router;
+use Gornung\Webentwicklung\Router\Router;
 use Respect\Validation\Exceptions\ValidationException;
 
 date_default_timezone_set('Europe/Berlin');
@@ -34,6 +35,7 @@ $router->addRoute('/blog/show', BlogController::class, 'show');
 $router->addRoute('/blog/add', BlogController::class, 'add');
 $router->addRoute('/blog/delete', DeleteController::class, 'delete');
 $router->addRoute('/blog/search', SearchController::class, 'execute');
+$router->addRoute('/blog/edit', EditController::class, 'edit');
 
 $router->addRoute('/auth/login', LoginController::class, 'execute');
 $router->addRoute('/auth/signup', SignUpController::class, 'execute');
@@ -50,7 +52,7 @@ try {
 } catch (NotFoundException $exception) {
     // 404
     $response->setStatusCode($exception->getCode());
-    $response->setBody('Sorry, 404');
+    $response->setBody('Sorry, 404, <a href="/auth/login">Zur Homepage</a>');
 } catch (AuthenticationRequiredException $exception) {
     // 401 react on missing login
     $response->setStatusCode($exception->getCode());

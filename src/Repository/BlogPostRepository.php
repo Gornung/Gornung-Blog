@@ -93,6 +93,19 @@ class BlogPostRepository extends AbstractRepository
         }
     }
 
+
+    /**
+     * @param  BlogPost  $post
+     *
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function update(BlogPost $post): void
+    {
+        $this->getRepository()->find($post->getId());
+        $this->getEntityManager()->flush();
+    }
+
     /**
      * @param  string  $id
      *

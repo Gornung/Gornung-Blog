@@ -147,7 +147,6 @@ class BlogController extends AbstractController
 
         $lastSlash       = strripos($request->getUrl(), '/') ?: 0;
         $potentialUrlKey = substr($request->getUrl(), $lastSlash + 1);
-
         $entry = $repository->getByUrlKey($potentialUrlKey);
 
         // TODO: Write BaseController with Session to get admin differently

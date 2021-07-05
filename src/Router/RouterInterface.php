@@ -1,6 +1,6 @@
 <?php
 
-namespace Gornung\Webentwicklung;
+namespace Gornung\Webentwicklung\Router;
 
 use Gornung\Webentwicklung\Http\IRequest;
 use Gornung\Webentwicklung\Http\IResponse;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Gornung\Webentwicklung;
+namespace Gornung\Webentwicklung\Router;
 
 use Gornung\Webentwicklung\Exceptions\NotFoundException;
 use Gornung\Webentwicklung\Http\IRequest;
