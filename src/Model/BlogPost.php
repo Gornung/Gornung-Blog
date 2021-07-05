@@ -125,7 +125,7 @@ class BlogPost
      */
     public function setUrlKey(string $urlKey): void
     {
-        $this->id = $urlKey;
+        $this->$urlKey = $urlKey;
     }
 
     /**

@@ -22,4 +22,20 @@ abstract class AbstractController implements ISessionAwareController
     {
         return $this->session;
     }
+
+    /**
+     * @param  string  $title
+     *
+     * @return string
+     */
+    public function generateUrlSlug(string $title): string
+    {
+        // TODO handle Umlaute ä -> ae, right now it removes the value
+        $slug = strtolower($title);
+        //replace non-alphanumerics
+        $slug = preg_replace('/[^[:alnum:]]/', ' ', $slug);
+        //replace spaces
+        $slug = preg_replace('/[[:space:]]+/', '-', $slug);
+        return trim($slug, '-');
+    }
 }

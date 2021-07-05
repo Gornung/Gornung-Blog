@@ -69,13 +69,6 @@ class Edit extends AbstractController
         $this->validate($author);
         $this->validate($text);
 
-        try {
-            $blogPostRepository->update($post);
-        } catch (OptimisticLockException | ORMException $e) {
-            throw new DatabaseException(
-                'Es ist beim Editieren zu einem Fehler gekommen.'
-            );
-        }
 
         //check differences
         if (
@@ -87,19 +80,23 @@ class Edit extends AbstractController
             return;
         }
 
-        $redirect = new Redirect('/post/show/.$potentialUrlKey.', $response);
-        $redirect->execute();
-    }
+        try {
+            $post->setTitle($title);
+            $post->setAuthor($author);
+            $post->setText($text);
+            $post->setUrlKey($this->generateUrlSlug($title));
 
-    /**
-     * @param $value
-     */
-    private function validate($value): void
-    {
-        Validator::allOf(
-            Validator::notEmpty(),
-            Validator::stringType()
-        )->check($value);
+            $blogPostRepository->update($post);
+        } catch (OptimisticLockException | ORMException $e) {
+            throw new DatabaseException(
+                'Es ist beim Editieren zu einem Fehler gekommen.'
+            );
+        }
+
+        $potentialchangedUrl = $post->getUrlKey();
+
+        $redirect = new Redirect("/blog/show/$potentialchangedUrl", $response);
+        $redirect->execute();
     }
 
     /**
@@ -116,5 +113,16 @@ class Edit extends AbstractController
         $post->{"session"} = $this->getSession()->getEntries();
         $view              = new EditView();
         $response->setBody($view->render($post));
+    }
+
+    /**
+     * @param $value
+     */
+    private function validate($value): void
+    {
+        Validator::allOf(
+            Validator::notEmpty(),
+            Validator::stringType()
+        )->check($value);
     }
 }
