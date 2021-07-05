@@ -118,7 +118,7 @@ class Edit extends AbstractController
     /**
      * @param $value
      */
-    private function validate($value): void
+    private function validate(string $value): void
     {
         Validator::allOf(
             Validator::notEmpty(),
