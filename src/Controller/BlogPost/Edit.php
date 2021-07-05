@@ -81,10 +81,12 @@ class Edit extends AbstractController
         }
 
         try {
+            // TODO: Fix UrlKey Change doesn't update urlKey
+            $potentialNewUrlKey = $this->generateUrlSlug($title);
             $post->setTitle($title);
             $post->setAuthor($author);
             $post->setText($text);
-            $post->setUrlKey($this->generateUrlSlug($title));
+            $post->setUrlKey($potentialNewUrlKey);
 
             $blogPostRepository->update($post);
         } catch (OptimisticLockException | ORMException $e) {
