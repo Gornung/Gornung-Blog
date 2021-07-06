@@ -3,6 +3,7 @@
 namespace Gornung\Webentwicklung\Controller;
 
 use Gornung\Webentwicklung\Http\Session;
+use Respect\Validation\Validator;
 
 abstract class AbstractController implements ISessionAwareController
 {
@@ -37,5 +38,30 @@ abstract class AbstractController implements ISessionAwareController
         //replace spaces
         $slug = preg_replace('/[[:space:]]+/', '-', $slug);
         return trim($slug, '-');
+    }
+
+    /**
+     * @param  string  $value
+     */
+    protected function validateNotEmptyAndString(string $value): void
+    {
+        Validator::allOf(
+            Validator::notEmpty(),
+            Validator::stringType()
+        )->check($value);
+    }
+
+    /**
+     * @param  string  $value
+     *
+     * @return string
+     */
+    protected function preventXss(string $value): string
+    {
+        return htmlspecialchars(
+            $value,
+            ENT_QUOTES,
+            'UTF-8'
+        );
     }
 }

@@ -16,7 +16,6 @@ use Gornung\Webentwicklung\Http\Redirect;
 use Gornung\Webentwicklung\Model\BlogPost;
 use Gornung\Webentwicklung\Repository\BlogPostRepository;
 use Gornung\Webentwicklung\View\BlogPost\Edit as EditView;
-use Respect\Validation\Validator;
 
 class Edit extends AbstractController
 {
@@ -61,13 +60,13 @@ class Edit extends AbstractController
             return;
         }
 
-        $title  = $request->getParameter('title');
-        $author = $request->getParameter('author');
-        $text   = $request->getParameter('text');
+        $title  = $this->preventXss($request->getParameter('title'));
+        $author = $this->preventXss($request->getParameter('author'));
+        $text   = $this->preventXss($request->getParameter('text'));
 
-        $this->validate($title);
-        $this->validate($author);
-        $this->validate($text);
+        $this->validateNotEmptyAndString($title);
+        $this->validateNotEmptyAndString($author);
+        $this->validateNotEmptyAndString($text);
 
 
         //check differences
@@ -95,9 +94,9 @@ class Edit extends AbstractController
             );
         }
 
-        $potentialchangedUrl = $post->getUrlKey();
+        $potentialChangedUrl = $post->getUrlKey();
 
-        $redirect = new Redirect("/blog/show/$potentialchangedUrl", $response);
+        $redirect = new Redirect("/blog/show/$potentialChangedUrl", $response);
         $redirect->execute();
     }
 
@@ -115,16 +114,5 @@ class Edit extends AbstractController
         $post->{"session"} = $this->getSession()->getEntries();
         $view              = new EditView();
         $response->setBody($view->render($post));
-    }
-
-    /**
-     * @param $value
-     */
-    private function validate(string $value): void
-    {
-        Validator::allOf(
-            Validator::notEmpty(),
-            Validator::stringType()
-        )->check($value);
     }
 }

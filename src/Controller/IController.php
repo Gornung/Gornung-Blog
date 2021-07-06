@@ -7,6 +7,7 @@ namespace Gornung\Webentwicklung\Controller;
 use Gornung\Webentwicklung\Http\IRequest;
 use Gornung\Webentwicklung\Http\IResponse;
 
+// should write a better interface and use it everywhere resolved most solutions through inheritance
 interface IController
 {
 

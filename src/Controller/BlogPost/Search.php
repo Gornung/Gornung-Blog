@@ -46,12 +46,10 @@ class Search extends AbstractController implements IController
             return;
         }
 
-        $keyword = $request->getParameter('search_keyword');
+        // prevent xss for every input
+        $keyword = $this->preventXss($request->getParameter('search_keyword'));
 
-        v::allOf(
-            v::notEmpty(),
-            v::stringType()
-        )->check($keyword);
+        $this->validateNotEmptyAndString($keyword);
 
         $blogRepository = new BlogPostRepository();
 

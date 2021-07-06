@@ -52,8 +52,8 @@ class Delete extends AbstractController
 
 
     /**
-     * unnecessary because we are faking the view button it throw the Session
-     * still can be removed by calling the url NOT SAFE!
+     * we are getting the Admin through the session should be
+     * rewritten to set the admin flag in session but through the db
      *
      * @return bool
      */

@@ -4,7 +4,6 @@ namespace Gornung\Webentwicklung\Repository;
 
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Gornung\Webentwicklung\Model\BlogPost;
 
@@ -16,7 +15,7 @@ class BlogPostRepository extends AbstractRepository
      */
     public function get(): array
     {
-        // TODO: edit to give orderBy dateTime
+        // TODO: return orderBy dateTime DESC
         return $this->getRepository()->findAll();
     }
 
@@ -28,47 +27,54 @@ class BlogPostRepository extends AbstractRepository
     public function getByUrlKey(string $urlKey): ?BlogPost
     {
         try {
-            $result = $this->getEntityManager()
-                           ->createQueryBuilder()
-                           ->select(
-                               'post'
-                           )
-                           ->from(
-                               'Gornung\Webentwicklung\Model\BlogPost',
-                               'post'
-                           )
-                           ->where('post.urlKey like ?1')
-                           ->setParameter(1, $urlKey)
-                           ->getQuery()->getSingleResult();
+            return $this->getEntityManager()
+                        ->createQueryBuilder()
+                        ->select(
+                            'post'
+                        )
+                        ->from(
+                            'Gornung\Webentwicklung\Model\BlogPost',
+                            'post'
+                        )
+                        ->where('post.urlKey like ?1')
+              //        setParameter prevents SQL Injection
+                        ->setParameter(1, $urlKey)
+                        ->getQuery()->getSingleResult();
         } catch (NoResultException | NonUniqueResultException $e) {
             return null;
         }
-        return $result;
     }
+
 
     /**
      * @param  string  $keyword
      *
-     * @return BlogPost[]
+     * @return array
      */
     public function getByKeyword(string $keyword): array
     {
-        $dql   = "
-        SELECT post
-          FROM Gornung\Webentwicklung\Model\BlogPost post
-          WHERE post.author like '%$keyword%' or post.title like '%$keyword%' or post.text like '%$keyword%'
-    ";
-        $query = $this->entityManager->createQuery($dql);
-
-        return $query->getResult();
+        return $this->getEntityManager()
+                    ->createQueryBuilder()
+                    ->select(
+                        'post'
+                    )
+                    ->from(
+                        'Gornung\Webentwicklung\Model\BlogPost',
+                        'post'
+                    )
+                    ->where(
+                        'post.author like :keyword or post.text like :keyword or post.title like :keyword'
+                    )
+                    ->setParameter('keyword', '%' . $keyword . '%')
+                    ->getQuery()
+                    ->getResult();
     }
 
     /**
      * @param  BlogPost  $blogPost
      *
      * @return void
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @throws \Doctrine\ORM\ORMException
      */
     public function add(BlogPost $blogPost): void
     {
@@ -93,19 +99,6 @@ class BlogPostRepository extends AbstractRepository
         }
     }
 
-
-    /**
-     * @param  BlogPost  $post
-     *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
-    public function update(BlogPost $post): void
-    {
-        $this->getRepository()->find($post->getId());
-        $this->getEntityManager()->flush();
-    }
-
     /**
      * @param  string  $id
      *
@@ -125,6 +118,18 @@ class BlogPostRepository extends AbstractRepository
     public function remove(BlogPost $blogPost): void
     {
         $this->getEntityManager()->remove($blogPost);
+        $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @param  BlogPost  $post
+     *
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function update(BlogPost $post): void
+    {
+        $this->getRepository()->find($post->getId());
         $this->getEntityManager()->flush();
     }
 
