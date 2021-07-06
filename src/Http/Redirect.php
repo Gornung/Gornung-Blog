@@ -11,7 +11,6 @@ class Redirect implements IRedirect
 
     private IResponse $response;
 
-
     /**
      * Redirect constructor.
      *

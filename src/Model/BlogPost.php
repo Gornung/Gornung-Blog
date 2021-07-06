@@ -6,6 +6,8 @@ namespace Gornung\Webentwicklung\Model;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
+use stdClass;
 
 /**
  * Class BlogPost
@@ -15,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="blog_post")
  */
-class BlogPost
+class BlogPost implements JsonSerializable
 {
 
     /**
@@ -200,12 +202,26 @@ class BlogPost
         return $this->creator;
     }
 
-
     /**
      * @param  string|null  $creator
      */
     public function setCreator(?string $creator): void
     {
         $this->creator = $creator;
+    }
+
+    /**
+     * @return object
+     */
+    public function jsonSerialize()
+    {
+        $serializable           = new stdClass();
+        $serializable->title    = $this->title;
+        $serializable->urlKey   = $this->urlKey;
+        $serializable->text     = $this->text;
+        $serializable->author   = $this->author;
+        $serializable->creator  = $this->creator;
+        $serializable->dateTime = $this->dateTime;
+        return $serializable;
     }
 }

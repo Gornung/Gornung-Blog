@@ -13,20 +13,31 @@ class Request implements IRequest
     protected string $url = '';
 
     /**
+     * @var string
+     */
+    protected string $methode = '';
+
+    /**
      * @var array
      */
     protected array $parameters;
+
 
     /**
      * Request constructor.
      *
      * @param  string  $url
      * @param  array  $parameters
+     * @param  string  $methode
      */
-    public function __construct(string $url, array $parameters)
-    {
-        $this->url        = $url;
+    public function __construct(
+        string $url,
+        array $parameters,
+        string $methode = 'GET'
+    ) {
+        $this->url = $url;
         $this->parameters = $parameters;
+        $this->methode = $methode;
     }
 
     /**
@@ -38,7 +49,7 @@ class Request implements IRequest
     }
 
     /**
-     * @param mixed $url
+     * @param  mixed  $url
      */
     public function setUrl($url): void
     {
@@ -46,15 +57,8 @@ class Request implements IRequest
     }
 
     /**
-     * @return array
-     */
-    public function getParameters(): array
-    {
-        return $this->parameters;
-    }
-
-    /**
-     * @param string $name
+     * @param  string  $name
+     *
      * @return string
      */
     public function getParameter(string $name): string
@@ -63,8 +67,8 @@ class Request implements IRequest
     }
 
     /**
-     * @param string $name
-     * @param string $parameter
+     * @param  string  $name
+     * @param  string  $parameter
      */
     public function setParameter(string $name, string $parameter): void
     {
@@ -72,15 +76,8 @@ class Request implements IRequest
     }
 
     /**
-     * @param array $parameters
-     */
-    public function setParameters(array $parameters): void
-    {
-        $this->parameters = $parameters;
-    }
-
-    /**
-     * @param string $name
+     * @param  string  $name
+     *
      * @return bool
      */
     public function hasParameter(string $name): bool
@@ -97,5 +94,31 @@ class Request implements IRequest
     {
         $p = $this->getParameters();
         return $p[$param];
+    }
+
+    /**
+     * @return array
+     */
+    public function getParameters(): array
+    {
+        return $this->parameters;
+    }
+
+    /**
+     * @param  array  $parameters
+     */
+    public function setParameters(array $parameters): void
+    {
+        $this->parameters = $parameters;
+    }
+
+    public function getMethode(): string
+    {
+        return $this->methode;
+    }
+
+    public function setMethode(string $methode): void
+    {
+        $this->methode = $methode;
     }
 }

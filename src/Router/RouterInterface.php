@@ -10,19 +10,8 @@ interface RouterInterface
 {
 
     /**
-     * @param  string  $route
-     * @param  string  $controllerName
-     * @param  string  $actionName
-     */
-    public function addRoute(
-        string $route,
-        string $controllerName,
-        string $actionName
-    ): void;
-
-    /**
      * @param  IRequest  $request
      * @param  IResponse  $response
      */
-    public function route(IRequest $request, IResponse $response): void;
+    public function route(IRequest $request, IResponse $response): bool;
 }
