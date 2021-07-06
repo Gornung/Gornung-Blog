@@ -50,6 +50,7 @@ class Show extends AbstractController
         }
 
         if ($entry) {
+            // TODO: make entry to an array
             $response->setBody($view->render($entry));
         } else {
             throw new NotFoundException();

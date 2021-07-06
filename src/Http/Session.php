@@ -82,6 +82,7 @@ class Session
      * @param  string  $name
      *
      * can be bool or string supported in php 8.0
+     * bool|string
      *
      * @return mixed
      */

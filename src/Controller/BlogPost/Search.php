@@ -56,6 +56,7 @@ class Search extends AbstractController implements IController
         // can be rewritten in getByTitleTextOrAuthor($title, $text, $author) with view of those inputs
         $foundBlogPosts = $blogRepository->getByKeyword($keyword);
 
+        // TODO: $foundBlogPosts entry to an array
         $response->setBody($searchView->render($foundBlogPosts));
     }
 }

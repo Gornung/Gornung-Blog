@@ -19,8 +19,14 @@ abstract class AbstractView
      */
     public function render($data): string
     {
-        // TODO need refactor using method to be type safe getting now objects and arrays can't make use of extract
-        // maybe give multiple data values
+        /** TODO need refactor using method to be type safe getting now objects and arrays can't make use of extract
+         * maybe give multiple data values
+         *
+         * OR
+         *
+         * let extract be like this and give those object within an array such as
+         * objectInArray = [ obj -> {this obj}]
+         **/
         // extract($data);
         ob_start();
         /**

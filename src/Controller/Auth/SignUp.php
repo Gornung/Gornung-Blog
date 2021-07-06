@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Gornung\Webentwicklung\Controller\Auth;
 
 use Doctrine\ORM\ORMException;
+use Gornung\Webentwicklung\Controller\AbstractController;
 use Gornung\Webentwicklung\Controller\IController;
 use Gornung\Webentwicklung\Http\IRequest;
 use Gornung\Webentwicklung\Http\IResponse;
@@ -13,7 +14,7 @@ use Gornung\Webentwicklung\Repository\BlogUserRepository;
 use Gornung\Webentwicklung\View\Auth\SignUp as SignUpView;
 use Respect\Validation\Validator as v;
 
-class SignUp implements IController
+class SignUp extends AbstractController implements IController
 {
 
     public function execute(IRequest $request, IResponse $response): void
@@ -31,11 +32,18 @@ class SignUp implements IController
      */
     public function signUp(IRequest $request, IResponse $response): void
     {
-        $username        = trim($request->getParameters()['username']);
-        $emailAddress    = trim($request->getParameters()['email']);
+        $username     = $this->preventXss(
+            trim($request->getParameters()['username'])
+        );
+        $emailAddress = $this->preventXss(
+            trim($request->getParameters()['email'])
+        );
+        // Xss not necessary because it will be hashed afterwards otherwise the
+        // PW "<script>alter('DONE');</script>" would be changed, maybe im wrong
         $password        = $request->getParameters()['password'];
         $confirmPassword = $request->getParameters()['confirm_password'];
 
+        // TODO: write in AbstractController a function for other validation cases
         v::anyOf(
             v::notEmpty(),
             v::stringType(),
@@ -73,18 +81,6 @@ class SignUp implements IController
             $response->setBody($signUpView->render($error));
             return;
         }
-
-        // escape potential xss TODO scales bad write globaly
-        $username     = htmlspecialchars(
-            $username,
-            ENT_QUOTES,
-            'UTF-8'
-        );
-        $emailAddress = htmlspecialchars(
-            $emailAddress,
-            ENT_QUOTES,
-            'UTF-8'
-        );
 
         $password = password_hash($password, PASSWORD_DEFAULT);
 

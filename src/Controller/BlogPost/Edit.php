@@ -113,6 +113,7 @@ class Edit extends AbstractController
          */
         $post->{"session"} = $this->getSession()->getEntries();
         $view              = new EditView();
+        // TODO: make post to an array
         $response->setBody($view->render($post));
     }
 }

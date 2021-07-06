@@ -5,7 +5,7 @@ namespace Gornung\Webentwicklung\Router;
 use Gornung\Webentwicklung\Http\IRequest;
 use Gornung\Webentwicklung\Http\IResponse;
 
-// IRouter won't compile
+// IRouter won't compile idc why :D rather IntelliJ doesn't recognize as interface
 interface RouterInterface
 {
 

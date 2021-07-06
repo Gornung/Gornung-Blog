@@ -35,6 +35,8 @@ class Router implements RouterInterface
     /**
      * @param  IRequest  $request
      * @param  IResponse  $response
+     *
+     * @throws \Gornung\Webentwicklung\Exceptions\NotFoundException
      */
     public function route(IRequest $request, IResponse $response): void
     {
