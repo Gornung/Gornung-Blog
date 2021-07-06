@@ -80,12 +80,16 @@ class BlogPosts extends AbstractController
     {
         $repository = new BlogPostRepository();
 
-        $entry = $repository->getByKeyword(current($request->getIdentifiers()));
+
+        $keyword   = $this->preventXss($request->getParameter('keyword'));
+
+        $entry = $repository->getByKeyword($keyword);
 
         // TODO: error handling needs to be different for webservices!
         if (!$entry) {
             throw new NotFoundException();
         }
+
 
         $view = new JsonView();
 

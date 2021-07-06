@@ -41,6 +41,13 @@ $restRouter->addRoute(
     'GET'
 );
 
+$restRouter->addRoute(
+    '\/blogposts-keyword',
+    BlogPostsRestController::class,
+    'getByKeyword',
+    'GET'
+);
+
 // TODO: as soon as the Request-methode can be overwritten use POST
 $restRouter->addRoute(
     '\/blogposts-add',
