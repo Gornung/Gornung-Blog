@@ -9,7 +9,6 @@ class Session
 
     protected const LOGIN_INDICATOR_KEY = 'isLoggedIn';
 
-
     /**
      * @var array
      */

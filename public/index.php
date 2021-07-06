@@ -12,6 +12,7 @@ use Gornung\Webentwicklung\Controller\BlogPost\Home as HomeController;
 use Gornung\Webentwicklung\Controller\BlogPost\Search as SearchController;
 use Gornung\Webentwicklung\Controller\BlogPost\Show as ShowController;
 use Gornung\Webentwicklung\Controller\REST\BlogPosts as BlogPostsRestController;
+use Gornung\Webentwicklung\Controller\REST\Users as BlogUsersRestController;
 use Gornung\Webentwicklung\Exceptions\AuthenticationRequiredException;
 use Gornung\Webentwicklung\Exceptions\ForbiddenException;
 use Gornung\Webentwicklung\Exceptions\NotFoundException;
@@ -32,10 +33,25 @@ $routers = [];
 
 $restRouter = new RestRouter();
 $routers[]  = $restRouter;
+
 $restRouter->addRoute(
     '\/blogposts\/(\S+)',
     BlogPostsRestController::class,
     'getByUrlKey',
+    'GET'
+);
+
+$restRouter->addRoute(
+    '\/blogposts-add',
+    BlogPostsRestController::class,
+    'add',
+    'GET'
+);
+
+$restRouter->addRoute(
+    '\/users\/(\S+)',
+    BlogUsersRestController::class,
+    'getByUsername',
     'GET'
 );
 

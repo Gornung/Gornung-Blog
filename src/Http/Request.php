@@ -25,6 +25,8 @@ class Request implements IRequest
 
     /**
      * Request constructor.
+     * TODO: make methode optional and overwriteable ?string is not working
+     * CANNOT overwrite 'GET' in methode
      *
      * @param  string  $url
      * @param  array  $parameters
@@ -35,9 +37,9 @@ class Request implements IRequest
         array $parameters,
         string $methode = 'GET'
     ) {
-        $this->url = $url;
+        $this->url        = $url;
         $this->parameters = $parameters;
-        $this->methode = $methode;
+        $this->methode    = $methode;
     }
 
     /**

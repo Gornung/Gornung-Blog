@@ -6,11 +6,13 @@ namespace Gornung\Webentwicklung\Http;
 
 class RestRequest extends Request implements IRestAware
 {
-
-
     protected array $identifiers;
 
-
+    /**
+     * @param  \Gornung\Webentwicklung\Http\IRequest  $request
+     *
+     * @return \Gornung\Webentwicklung\Http\RestRequest
+     */
     public static function fromRequestInstance(IRequest $request): RestRequest
     {
         return new static(

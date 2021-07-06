@@ -37,9 +37,20 @@ class RestRouter implements RouterInterface
         $request = RestRequest::fromRequestInstance($request);
 
         foreach ($this->routes as $route => $methodeArray) {
-            $pattern = '/^\/' . static::REST_ENDPOINT_IDENTIFIER . $route . '/';
+            $pattern       = '/' . static::REST_ENDPOINT_IDENTIFIER . $route . '/';
+            $urlComponents = parse_url($url);
+
+            if (
+                !array_key_exists(
+                    'path',
+                    $urlComponents
+                ) || $urlComponents['path'] == null
+            ) {
+                return false;
+            }
+
             $matches = [];
-            if (preg_match($pattern, $url, $matches)) {
+            if (preg_match($pattern, $urlComponents['path'], $matches)) {
                 unset($matches[0]);
                 $request->setIdentifiers($matches);
                 foreach ($methodeArray as $methode => $controllerArray) {

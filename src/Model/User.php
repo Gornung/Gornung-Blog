@@ -6,6 +6,8 @@ namespace Gornung\Webentwicklung\Model;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
+use stdClass;
 
 /**
  * Class User
@@ -13,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="users")
  */
-class User
+class User implements JsonSerializable
 {
 
     /**
@@ -189,5 +191,19 @@ class User
         int $dateTime
     ): void {
         $this->dateTime = $dateTime;
+    }
+
+    /**
+     * @return object
+     */
+    public function jsonSerialize()
+    {
+        $serializable                     = new stdClass();
+        $serializable->registeredDateTime = $this->dateTime;
+        $serializable->email              = $this->email;
+        $serializable->username           = $this->username;
+        $serializable->isAdmin            = $this->isAdmin;
+
+        return $serializable;
     }
 }
