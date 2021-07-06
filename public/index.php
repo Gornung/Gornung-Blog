@@ -41,6 +41,7 @@ $restRouter->addRoute(
     'GET'
 );
 
+// TODO: as soon as the Request-methode can be overwritten use POST
 $restRouter->addRoute(
     '\/blogposts-add',
     BlogPostsRestController::class,
