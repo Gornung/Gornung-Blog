@@ -81,7 +81,12 @@ class BlogPosts extends AbstractController
         $repository = new BlogPostRepository();
 
 
-        $keyword   = $this->preventXss($request->getParameter('keyword'));
+        /**
+         * TODO: getParameter is given by IRequest -> Refactor
+         *
+         * @psalm-suppress UndefinedInterfaceMethod
+         **/
+        $keyword = $this->preventXss($request->getParameter('keyword'));
 
         $entry = $repository->getByKeyword($keyword);
 

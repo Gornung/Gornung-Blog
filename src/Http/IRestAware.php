@@ -13,7 +13,7 @@ interface IRestAware
     public function getIdentifiers(): array;
 
     /**
-     * @param array $identifiers
+     * @param  array  $identifiers
      */
     public function setIdentifiers(array $identifiers): void;
 }
